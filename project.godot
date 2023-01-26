@@ -10,7 +10,7 @@ config_version=4
 
 [application]
 
-config/name="Planets"
+config/name="Orbits"
 run/main_scene="res://Planets.tscn"
 config/icon="res://icon.png"
 
