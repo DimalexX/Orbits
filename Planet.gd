@@ -1,18 +1,19 @@
 extends RigidBody2D
 
 
-const LINE_TIMER = 0.03 #больше 0.03 не очень красивая траетория становится? или нет
-const MAX_NUM_OF_POINTS = 1000
+const LINE_TIMER = 0.05 #больше 0.05 не очень красивая траетория становится? или нет
+const MAX_NUM_OF_POINTS = 1500
 
-var NUM_OF_POINTS = 1000
+var NUM_OF_POINTS = 1500
 
 
 var other_planets
 var count = 0
-var l2d: Line2D
+var l2d: AntialiasedLine2D
 var calc_period = false
 var turned = false
 var time_start = 0
+var skip_point = false
 
 
 func _ready():
@@ -20,9 +21,8 @@ func _ready():
 	angular_velocity = rand_range(-1, 1)
 	other_planets = get_tree().get_nodes_in_group("Planet")
 	other_planets.erase(self)
-	l2d = Line2D.new()
-	l2d.antialiased = true
-	l2d.width = 2
+	l2d = AntialiasedLine2D.new()
+	l2d.width = 6
 	l2d.gradient = Gradient.new()
 	l2d.gradient.set_color(0, Color(0, 0, 0, 0))
 	l2d.gradient.set_color(1, Color(rand_range(0, 1), rand_range(0, 1), rand_range(0, 1), 1))
@@ -32,7 +32,7 @@ func _ready():
 
 
 func change_num_of_points(t: float):
-	NUM_OF_POINTS = min(t/1100.0/LINE_TIMER, MAX_NUM_OF_POINTS) #зависит от fps?
+	NUM_OF_POINTS = min(t/1000.0/LINE_TIMER, MAX_NUM_OF_POINTS) #зависит от fps?
 
 
 func check_period():
@@ -52,10 +52,16 @@ func check_period():
 func _process(delta):
 	count += delta
 	if count > LINE_TIMER:
+#		if name == "Mercury" or name == "Moon3": print(linear_velocity.length())
 		check_period()
 		count -= LINE_TIMER
-		l2d.add_point(global_position)
-		if l2d.points.size() > NUM_OF_POINTS:
+		if linear_velocity.length() > 50:
+			skip_point = false
+		else:
+			skip_point = not skip_point
+		if not skip_point:
+			l2d.add_point(global_position)
+		if l2d.points.size() > NUM_OF_POINTS: #2 раза, чтобы хвост плавно догонял
 			l2d.remove_point(0)
 		if l2d.points.size() > NUM_OF_POINTS:
 			l2d.remove_point(0)
