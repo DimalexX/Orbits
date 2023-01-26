@@ -8,7 +8,7 @@ var NUM_OF_POINTS = 1500
 
 
 var other_planets
-var count = 0
+var count: float = 0
 var l2d: AntialiasedLine2D
 var calc_period = false
 var turned = false
@@ -22,7 +22,7 @@ func _ready():
 	other_planets = get_tree().get_nodes_in_group("Planet")
 	other_planets.erase(self)
 	l2d = AntialiasedLine2D.new()
-	l2d.width = 6
+	l2d.width = 5
 	l2d.gradient = Gradient.new()
 	l2d.gradient.set_color(0, Color(0, 0, 0, 0))
 	l2d.gradient.set_color(1, Color(rand_range(0, 1), rand_range(0, 1), rand_range(0, 1), 1))
@@ -52,7 +52,6 @@ func check_period():
 func _process(delta):
 	count += delta
 	if count > LINE_TIMER:
-#		if name == "Mercury" or name == "Moon3": print(linear_velocity.length())
 		check_period()
 		count -= LINE_TIMER
 		if linear_velocity.length() > 50:
@@ -73,4 +72,4 @@ func _physics_process(_delta):
 	for pl in other_planets:
 		pl_global_position = pl.global_position
 		add_central_force(global_position.direction_to(pl_global_position)*
-			mass*pl.mass/global_position.distance_squared_to(pl_global_position)*100)
+			mass*pl.mass/global_position.distance_squared_to(pl_global_position)*0.6) #*0.66725)

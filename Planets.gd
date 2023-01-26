@@ -6,14 +6,14 @@ const RND_GEN_ASTEROIDS_SOL_DIST = 200
 const RND_GEN_ASTEROIDS_MIN_SPEED = 30
 const RND_GEN_ASTEROIDS_MAX_SPEED = 60
 const RND_GEN_ASTEROIDS_ANGLE = 1
-const RND_GEN_ASTEROIDS_MIN_MASS = .1
-const RND_GEN_ASTEROIDS_MAX_MASS = 5
+const RND_GEN_ASTEROIDS_MIN_MASS = .01
+const RND_GEN_ASTEROIDS_MAX_MASS = .01
 const CAM_ZOOM_SPEED = 0.1
 const CAM_MOVE_SPEED = 600
 
 
 onready var PLANET = preload("res://Planet.tscn")
-onready var sol_camera = $Camera2D
+onready var sol_camera = $Sol/Camera2D
 onready var main_star = $Sol
 
 var planets = []
@@ -45,8 +45,12 @@ func generate_asteroids(num: int):
 		p.get_node("Sprite").scale *= .25
 		add_child(p)
 
-
+#var timer: float = 0
 func _process(delta):
+#	timer += delta
+#	if timer > .5:
+#		timer -= .5
+#		print(sol_camera.get_parent().linear_velocity.length())
 	cam_move = Vector2.ZERO
 	if Input.is_action_pressed("ui_left"):
 		cam_move.x -= CAM_MOVE_SPEED * delta
