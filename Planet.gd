@@ -1,7 +1,7 @@
 extends RigidBody2D
 
 
-const LINE_TIMER = 0.07
+const LINE_TIMER = 0.03 #больше 0.03 не очень красивая траетория становится? или нет
 const MAX_NUM_OF_POINTS = 1000
 
 var NUM_OF_POINTS = 1000
@@ -25,14 +25,14 @@ func _ready():
 	l2d.width = 2
 	l2d.gradient = Gradient.new()
 	l2d.gradient.set_color(0, Color(0, 0, 0, 0))
-	l2d.gradient.set_color(1, Color(rand_range(0, 1), rand_range(0, 1), rand_range(0, 1)))
+	l2d.gradient.set_color(1, Color(rand_range(0, 1), rand_range(0, 1), rand_range(0, 1), 1))
 	l2d.add_point(global_position)
 	get_parent().call_deferred("add_child", l2d)
 	time_start = Time.get_ticks_msec()
 
 
 func change_num_of_points(t: float):
-	NUM_OF_POINTS = min(t/1000.0/LINE_TIMER, MAX_NUM_OF_POINTS) #зависит от fps?
+	NUM_OF_POINTS = min(t/1100.0/LINE_TIMER, MAX_NUM_OF_POINTS) #зависит от fps?
 
 
 func check_period():

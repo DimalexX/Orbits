@@ -1,6 +1,13 @@
 extends Node2D
 
-
+const RND_GEN_ASTEROIDS_X = 700
+const RND_GEN_ASTEROIDS_Y = 400
+const RND_GEN_ASTEROIDS_SOL_DIST = 200
+const RND_GEN_ASTEROIDS_MIN_SPEED = 30
+const RND_GEN_ASTEROIDS_MAX_SPEED = 60
+const RND_GEN_ASTEROIDS_ANGLE = 1
+const RND_GEN_ASTEROIDS_MIN_MASS = .1
+const RND_GEN_ASTEROIDS_MAX_MASS = 5
 const CAM_ZOOM_SPEED = 0.1
 const CAM_MOVE_SPEED = 600
 
@@ -16,21 +23,27 @@ var rm_pressed = false
 
 func _ready():
 	randomize()
+	generate_asteroids(5)
+	planets = get_tree().get_nodes_in_group("Planet")
+
+
+func generate_asteroids(num: int):
 	var p
 	var v: Vector2
-	for _i in 10:
+	for _i in num:
 		p = PLANET.instance()
-		v = Vector2(rand_range(100, 1500), rand_range(100, 800))
-		if v.x > 600 and v.x < 1000 and v.y > 250 and v.y < 650:
-			v = v * 2
+		v = Vector2(rand_range(-RND_GEN_ASTEROIDS_X, RND_GEN_ASTEROIDS_X), 
+					rand_range(-RND_GEN_ASTEROIDS_Y, RND_GEN_ASTEROIDS_Y))
+		while v.distance_to(Vector2.ZERO) < RND_GEN_ASTEROIDS_SOL_DIST:
+			v = Vector2(rand_range(-RND_GEN_ASTEROIDS_X, RND_GEN_ASTEROIDS_X), 
+						rand_range(-RND_GEN_ASTEROIDS_Y, RND_GEN_ASTEROIDS_Y))
 		p.transform.origin = v
-		v = Vector2(rand_range(30, 60), 0).rotated(
-			v.angle_to_point(Vector2(800, 450)) - rand_range(PI/2 - 1, PI/2 + 1))
+		v = Vector2(rand_range(RND_GEN_ASTEROIDS_MIN_SPEED, RND_GEN_ASTEROIDS_MAX_SPEED), 0).rotated(
+			v.angle_to_point(Vector2.ZERO) - rand_range(PI/2 - RND_GEN_ASTEROIDS_ANGLE, PI/2 + RND_GEN_ASTEROIDS_ANGLE))
 		p.linear_velocity = v
-		p.mass = rand_range(.1, 5)
-		p.get_node("Sprite").scale *= .1
+		p.mass = rand_range(RND_GEN_ASTEROIDS_MIN_MASS, RND_GEN_ASTEROIDS_MAX_MASS)
+		p.get_node("Sprite").scale *= .25
 		add_child(p)
-	planets = get_tree().get_nodes_in_group("Planet")
 
 
 func _process(delta):
