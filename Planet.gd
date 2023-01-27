@@ -1,7 +1,7 @@
 extends RigidBody2D
 
 
-const LINE_TIMER = 0.05 #больше 0.05 не очень красивая траетория становится? или нет
+const LINE_TIMER: float = 0.05 #больше 0.05 не очень красивая траетория становится? или нет
 const MAX_NUM_OF_POINTS = 1500
 
 var NUM_OF_POINTS = 1500
@@ -13,7 +13,8 @@ var l2d: AntialiasedLine2D
 var calc_period = false
 var turned = false
 var time_start = 0
-var skip_point = false
+var cur_line_timer: float = LINE_TIMER
+var points_in_period = 0
 
 
 func _ready():
@@ -31,35 +32,36 @@ func _ready():
 	time_start = Time.get_ticks_msec()
 
 
-func change_num_of_points(t: float):
-	NUM_OF_POINTS = min(t/1000.0/LINE_TIMER, MAX_NUM_OF_POINTS) #зависит от fps?
-
-
 func check_period():
 	if calc_period and not turned:
 		if linear_velocity.x >= 0 or linear_velocity.y >= 0:
 			turned = true
 	if linear_velocity.x < 0 and linear_velocity.y < 0:
 		if turned:
-			var t = Time.get_ticks_msec()
-			change_num_of_points(t-time_start)
-			time_start = t
+			NUM_OF_POINTS = min(points_in_period * 1.5, MAX_NUM_OF_POINTS)
+			points_in_period = 0
 			turned = false
 		else:
 			calc_period = true
 
 
+func calc_cur_line_timer(vel: float):
+	if vel > 150:
+		return LINE_TIMER / 2
+	elif vel > 90:
+		return LINE_TIMER
+	else:
+		return LINE_TIMER * 2
+
+
 func _process(delta):
 	count += delta
-	if count > LINE_TIMER:
+	if count > cur_line_timer:
+		count -= cur_line_timer
+		points_in_period += 1
 		check_period()
-		count -= LINE_TIMER
-		if linear_velocity.length() > 50:
-			skip_point = false
-		else:
-			skip_point = not skip_point
-		if not skip_point:
-			l2d.add_point(global_position)
+		cur_line_timer = calc_cur_line_timer(linear_velocity.length())
+		l2d.add_point(global_position)
 		if l2d.points.size() > NUM_OF_POINTS: #2 раза, чтобы хвост плавно догонял
 			l2d.remove_point(0)
 		if l2d.points.size() > NUM_OF_POINTS:

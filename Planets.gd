@@ -23,7 +23,7 @@ var rm_pressed = false
 
 func _ready():
 	randomize()
-	generate_asteroids(5)
+	generate_asteroids(3)
 	planets = get_tree().get_nodes_in_group("Planet")
 
 
@@ -42,15 +42,11 @@ func generate_asteroids(num: int):
 			v.angle_to_point(Vector2.ZERO) - rand_range(PI/2 - RND_GEN_ASTEROIDS_ANGLE, PI/2 + RND_GEN_ASTEROIDS_ANGLE))
 		p.linear_velocity = v
 		p.mass = rand_range(RND_GEN_ASTEROIDS_MIN_MASS, RND_GEN_ASTEROIDS_MAX_MASS)
-		p.get_node("Sprite").scale *= .25
+		p.get_node("Sprite").scale *= .3
 		add_child(p)
 
-#var timer: float = 0
+
 func _process(delta):
-#	timer += delta
-#	if timer > .5:
-#		timer -= .5
-#		print(sol_camera.get_parent().linear_velocity.length())
 	cam_move = Vector2.ZERO
 	if Input.is_action_pressed("ui_left"):
 		cam_move.x -= CAM_MOVE_SPEED * delta
