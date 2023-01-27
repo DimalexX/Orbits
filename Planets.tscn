@@ -11,7 +11,7 @@
 script = ExtResource( 3 )
 
 [node name="Sol" parent="." instance=ExtResource( 2 )]
-mass = 1.9891e+06
+mass = 100000.0
 __meta__ = {
 "_edit_group_": true
 }
@@ -24,9 +24,9 @@ current = true
 smoothing_enabled = true
 
 [node name="Mercury" parent="." instance=ExtResource( 2 )]
-position = Vector2( -57.9, 0 )
-mass = 0.33
-linear_velocity = Vector2( 0, 143.7 )
+position = Vector2( -45, 0 )
+mass = 33.0
+linear_velocity = Vector2( 0, 150 )
 __meta__ = {
 "_edit_group_": true
 }
@@ -35,9 +35,9 @@ __meta__ = {
 scale = Vector2( 0.4, 0.4 )
 
 [node name="Venus" parent="." instance=ExtResource( 2 )]
-position = Vector2( 108.2, 0 )
-mass = 4.87
-linear_velocity = Vector2( 0, -105 )
+position = Vector2( 85, 0 )
+mass = 487.0
+linear_velocity = Vector2( 0, -110 )
 __meta__ = {
 "_edit_group_": true
 }
@@ -47,8 +47,8 @@ scale = Vector2( 0.4, 0.4 )
 
 [node name="Earth" parent="." instance=ExtResource( 2 )]
 position = Vector2( -149.6, 0 )
-mass = 5.97
-linear_velocity = Vector2( 0, 89.4 )
+mass = 597.0
+linear_velocity = Vector2( 0, 82 )
 __meta__ = {
 "_edit_group_": true
 }
@@ -59,8 +59,8 @@ texture = ExtResource( 5 )
 
 [node name="Mars" parent="." instance=ExtResource( 2 )]
 position = Vector2( 227.9, 0 )
-mass = 0.64
-linear_velocity = Vector2( 0, -72.3 )
+mass = 64.0
+linear_velocity = Vector2( 0, -67 )
 __meta__ = {
 "_edit_group_": true
 }
@@ -70,9 +70,9 @@ scale = Vector2( 0.7, 0.7 )
 texture = ExtResource( 6 )
 
 [node name="Jupiter" parent="." instance=ExtResource( 2 )]
-position = Vector2( -650, 0 )
-mass = 1898.8
-linear_velocity = Vector2( 0, 40 )
+position = Vector2( -500, 0 )
+mass = 2000.0
+linear_velocity = Vector2( 0, 44 )
 __meta__ = {
 "_edit_group_": true
 }
@@ -83,7 +83,6 @@ texture = ExtResource( 1 )
 
 [node name="Asteroid" parent="." instance=ExtResource( 2 )]
 position = Vector2( -250, -150 )
-mass = 0.01
 linear_velocity = Vector2( 0, 30 )
 __meta__ = {
 "_edit_group_": true
@@ -94,8 +93,7 @@ scale = Vector2( 0.4, 0.4 )
 
 [node name="Asteroid2" parent="." instance=ExtResource( 2 )]
 position = Vector2( 650, 0 )
-mass = 0.01
-linear_velocity = Vector2( 0, -40 )
+linear_velocity = Vector2( 0, -35 )
 __meta__ = {
 "_edit_group_": true
 }

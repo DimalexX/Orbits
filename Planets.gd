@@ -2,7 +2,7 @@ extends Node2D
 
 const RND_GEN_ASTEROIDS_X = 700
 const RND_GEN_ASTEROIDS_Y = 400
-const RND_GEN_ASTEROIDS_SOL_DIST = 200
+const RND_GEN_ASTEROIDS_SOL_DIST = 300
 const RND_GEN_ASTEROIDS_MIN_SPEED = 30
 const RND_GEN_ASTEROIDS_MAX_SPEED = 60
 const RND_GEN_ASTEROIDS_ANGLE = 1
@@ -23,7 +23,7 @@ var rm_pressed = false
 
 func _ready():
 	randomize()
-	generate_asteroids(3)
+	generate_asteroids(5)
 	planets = get_tree().get_nodes_in_group("Planet")
 
 
