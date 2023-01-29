@@ -7,6 +7,7 @@
 extents = Vector2( 1, 1 )
 
 [node name="Planet" type="RigidBody2D" groups=["Planet"]]
+pause_mode = 1
 collision_layer = 0
 collision_mask = 0
 gravity_scale = 0.0

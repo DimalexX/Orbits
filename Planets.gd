@@ -13,18 +13,24 @@ const CAM_MOVE_SPEED = 600
 
 
 onready var PLANET = preload("res://Planet.tscn")
-onready var sol_camera = $Sol/Camera2D
-onready var main_star = $Sol
+onready var sol_camera = $Planets/Sol/Camera2D
+onready var main_star = $Planets/Sol #надо назначать самую массивную
+onready var ui_buttons_load = $UI/Buttons/Load
+onready var ui_buttons_save = $UI/Buttons/Save
+onready	var planets_parent = $Planets
 
 var planets = []
 var cam_move: Vector2 = Vector2.ZERO
 var rm_pressed = false
+var paused = false
 
 
 func _ready():
 	randomize()
 	generate_asteroids(5)
 	planets = get_tree().get_nodes_in_group("Planet")
+	for p in planets:
+		p.set_other_planets(planets)
 
 
 func generate_asteroids(num: int):
@@ -43,7 +49,7 @@ func generate_asteroids(num: int):
 		p.linear_velocity = v
 		p.mass = rand_range(RND_GEN_ASTEROIDS_MIN_MASS, RND_GEN_ASTEROIDS_MAX_MASS)
 		p.get_node("Sprite").scale *= .3
-		add_child(p)
+		planets_parent.add_child(p)
 
 
 func _process(delta):
@@ -107,3 +113,74 @@ func _input(event):
 	elif event is InputEventMouseMotion and rm_pressed:
 		change_cam_parent(self)
 		sol_camera.global_position -= event.relative * sol_camera.zoom.x
+	elif event is InputEventKey:
+		if event.is_action_released("ui_select"):
+			change_pause()
+
+
+func change_pause():
+	ui_buttons_load.disabled = paused
+	ui_buttons_save.disabled = paused
+	get_tree().paused = not paused
+	paused = not paused
+
+
+func _on_Load_pressed():
+	load_orbits()
+
+
+func _on_Save_pressed():
+	save_orbits()
+
+
+func save_orbits():
+	var save_file = File.new()
+	save_file.open("user://orbits.save", File.WRITE)
+	for p in planets:
+		# Check the node is an instanced scene so it can be instanced again during load.
+		if p.filename.empty():
+			print("persistent node '%s' is not an instanced scene, skipped" % p.name)
+			continue
+		# Check the node has a save function.
+		if !p.has_method("save"):
+			print("persistent node '%s' is missing a save() function, skipped" % p.name)
+			continue
+		# Call the node's save function.
+		var node_data = p.save()
+		# Store the save dictionary as a new line in the save file.
+		save_file.store_line(to_json(node_data))
+	save_file.close()
+
+
+func load_orbits():
+	var load_file = File.new()
+	if not load_file.file_exists("user://orbits.save"):
+		print("Error! We don't have a save to load.")
+		return
+	# We need to revert the game state so we're not cloning objects
+	# during loading. This will vary wildly depending on the needs of a
+	# project, so take care with this step.
+	# For our example, we will accomplish this by deleting saveable objects.
+	for p in planets:
+		p.l2d.queue_free()
+		p.queue_free()
+	planets.clear()
+	# Load the file line by line and process that dictionary to restore
+	# the object it represents.
+	load_file.open("user://orbits.save", File.READ)
+	while load_file.get_position() < load_file.get_len():
+		# Get the saved dictionary from the next line in the save file
+		var node_data = parse_json(load_file.get_line())
+		# Firstly, we need to create the object and add it to the tree and set its position.
+		var new_object = load(node_data["filename"]).instance()
+		get_node(node_data["parent"]).add_child(new_object)
+		new_object.position = Vector2(node_data["position_x"], node_data["position_y"])
+		new_object.linear_velocity = Vector2(node_data["linear_velocity_x"], node_data["linear_velocity_y"])
+		new_object.mass = node_data["mass"]
+		var s: Sprite = new_object.get_node("Sprite")
+		s.texture = load(node_data["Sprite_texture"])
+		s.scale = Vector2(node_data["Sprite_scale_x"], node_data["Sprite_scale_y"])
+		planets.append(new_object)
+	for p in planets:
+		p.set_other_planets(planets)
+	load_file.close()

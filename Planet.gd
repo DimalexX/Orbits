@@ -4,10 +4,9 @@ extends RigidBody2D
 const LINE_TIMER: float = 0.05 #больше 0.05 не очень красивая траетория становится? или нет
 const MAX_NUM_OF_POINTS = 1500
 
-var NUM_OF_POINTS = 1500
 
-
-var other_planets
+var num_of_points = 1500
+var other_planets = []
 var count: float = 0
 var l2d: AntialiasedLine2D
 var calc_period = false
@@ -20,8 +19,6 @@ var points_in_period = 0
 func _ready():
 	randomize()
 	angular_velocity = rand_range(-1, 1)
-	other_planets = get_tree().get_nodes_in_group("Planet")
-	other_planets.erase(self)
 	l2d = AntialiasedLine2D.new()
 	l2d.width = 5
 	l2d.gradient = Gradient.new()
@@ -32,13 +29,18 @@ func _ready():
 	time_start = Time.get_ticks_msec()
 
 
+func set_other_planets(planets):
+	other_planets = planets.duplicate()
+	other_planets.erase(self)
+
+
 func check_period():
 	if calc_period and not turned:
 		if linear_velocity.x >= 0 or linear_velocity.y >= 0:
 			turned = true
 	if linear_velocity.x < 0 and linear_velocity.y < 0:
 		if turned:
-			NUM_OF_POINTS = min(points_in_period * 1.5, MAX_NUM_OF_POINTS)
+			num_of_points = min(points_in_period * 1.5, MAX_NUM_OF_POINTS)
 			points_in_period = 0
 			turned = false
 		else:
@@ -62,9 +64,9 @@ func _process(delta):
 		check_period()
 		cur_line_timer = calc_cur_line_timer(linear_velocity.length())
 		l2d.add_point(global_position)
-		if l2d.points.size() > NUM_OF_POINTS: #2 раза, чтобы хвост плавно догонял
+		if l2d.points.size() > num_of_points: #2 раза, чтобы хвост плавно догонял
 			l2d.remove_point(0)
-		if l2d.points.size() > NUM_OF_POINTS:
+		if l2d.points.size() > num_of_points:
 			l2d.remove_point(0)
 
 
@@ -75,3 +77,19 @@ func _physics_process(_delta):
 		pl_global_position = pl.global_position
 		add_central_force(global_position.direction_to(pl_global_position)*
 			mass*pl.mass/global_position.distance_squared_to(pl_global_position)*10) #*0.66725)
+
+
+func save():
+	var save_dict = {
+		"filename": get_filename(),
+		"parent": get_parent().get_path(),
+		"position_x": position.x, # Vector2 is not supported by JSON
+		"position_y": position.y,
+		"linear_velocity_x": linear_velocity.x,
+		"linear_velocity_y": linear_velocity.y,
+		"mass": mass,
+		"Sprite_texture": $Sprite.texture.resource_path,
+		"Sprite_scale_x": $Sprite.scale.x,
+		"Sprite_scale_y": $Sprite.scale.y,
+	}
+	return save_dict
