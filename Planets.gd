@@ -13,8 +13,7 @@ const CAM_MOVE_SPEED = 600
 
 
 onready var PLANET = preload("res://Planet.tscn")
-onready var sol_camera = $Planets/Sol/Camera2D
-onready var main_star = $Planets/Sol #надо назначать самую массивную
+onready var sol_camera = $Camera2D
 onready var ui_buttons_load = $UI/Buttons/Load
 onready var ui_buttons_save = $UI/Buttons/Save
 onready	var planets_parent = $Planets
@@ -29,8 +28,9 @@ func _ready():
 	randomize()
 	generate_asteroids(5)
 	planets = get_tree().get_nodes_in_group("Planet")
-	for p in planets:
-		p.set_other_planets(planets)
+	sort_planets()
+	sol_camera.global_position = calc_mass_center()
+	sol_camera.smoothing_enabled = true
 
 
 func generate_asteroids(num: int):
@@ -66,6 +66,39 @@ func _process(delta):
 	if cam_move.length() > 0:
 		change_cam_parent(self)
 		sol_camera.global_position += cam_move
+
+
+func calc_mass_center():
+	var sum1: Vector2 = Vector2.ZERO
+	var sum2: float = 0
+	for p in planets:
+		sum1 += p.global_position * p.mass
+		sum2 += p.mass
+	return sum1 / sum2
+
+
+func sort_by_mass(a, b):
+	if a.mass > b.mass:
+		return true
+	return false
+
+
+func sort_planets():
+	planets.sort_custom(self, "sort_by_mass")
+	for p in planets:
+		p.set_other_planets(planets)
+
+
+func delete_planet(planet):
+	if planet == planets[0]: return
+	planets.erase(planet)
+	sort_planets()
+	if sol_camera.get_parent() == planet:
+		change_cam_parent(self)
+		sol_camera.global_position = calc_mass_center()
+#		sol_camera.smoothing_enabled = true
+	planet.l2d.queue_free()
+	planet.queue_free()
 
 
 func change_cam_parent(new_parent):
@@ -160,7 +193,7 @@ func load_orbits():
 	# We need to revert the game state so we're not cloning objects
 	# during loading. This will vary wildly depending on the needs of a
 	# project, so take care with this step.
-	# For our example, we will accomplish this by deleting saveable objects.
+	change_cam_parent(self)
 	for p in planets:
 		p.l2d.queue_free()
 		p.queue_free()
@@ -181,6 +214,5 @@ func load_orbits():
 		s.texture = load(node_data["Sprite_texture"])
 		s.scale = Vector2(node_data["Sprite_scale_x"], node_data["Sprite_scale_y"])
 		planets.append(new_object)
-	for p in planets:
-		p.set_other_planets(planets)
+	sort_planets()
 	load_file.close()

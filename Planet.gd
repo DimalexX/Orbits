@@ -5,6 +5,8 @@ const LINE_TIMER: float = 0.05 #больше 0.05 не очень красива
 const MAX_NUM_OF_POINTS = 1500
 
 
+onready var orbits = $"../.."
+
 var num_of_points = 1500
 var other_planets = []
 var count: float = 0
@@ -14,6 +16,7 @@ var turned = false
 var time_start = 0
 var cur_line_timer: float = LINE_TIMER
 var points_in_period = 0
+var distance_timer: float
 
 
 func _ready():
@@ -24,7 +27,6 @@ func _ready():
 	l2d.gradient = Gradient.new()
 	l2d.gradient.set_color(0, Color(0, 0, 0, 0))
 	l2d.gradient.set_color(1, Color(rand_range(0, 1), rand_range(0, 1), rand_range(0, 1), 1))
-	l2d.add_point(global_position)
 	get_parent().call_deferred("add_child", l2d)
 	time_start = Time.get_ticks_msec()
 
@@ -55,8 +57,16 @@ func calc_cur_line_timer(vel: float):
 	else:
 		return LINE_TIMER * 2
 
+func check_distance():
+	var dis = position.distance_to(other_planets[0].position)
+	if dis > 5000:
+		orbits.delete_planet(self)
+
 
 func _process(delta):
+	distance_timer += delta
+	if distance_timer > 3:
+		check_distance()
 	count += delta
 	if count > cur_line_timer:
 		count -= cur_line_timer

@@ -36,10 +36,6 @@ __meta__ = {
 [node name="Sprite" parent="Planets/Sol" index="0"]
 texture = ExtResource( 4 )
 
-[node name="Camera2D" type="Camera2D" parent="Planets/Sol"]
-current = true
-smoothing_enabled = true
-
 [node name="Sol2" parent="Planets" instance=ExtResource( 2 )]
 position = Vector2( 300, 0 )
 mass = 100000.0
@@ -66,6 +62,9 @@ linear_velocity = Vector2( 0, -100 )
 [node name="Sprite" parent="Planets/Planet2" index="0"]
 scale = Vector2( 0.5, 0.5 )
 texture = SubResource( 2 )
+
+[node name="Camera2D" type="Camera2D" parent="."]
+current = true
 
 [connection signal="pressed" from="UI/Buttons/Load" to="." method="_on_Load_pressed"]
 [connection signal="pressed" from="UI/Buttons/Save" to="." method="_on_Save_pressed"]
