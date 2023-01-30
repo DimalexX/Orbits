@@ -10,18 +10,27 @@ const RND_GEN_ASTEROIDS_MIN_MASS = .01
 const RND_GEN_ASTEROIDS_MAX_MASS = .01
 const CAM_ZOOM_SPEED = 0.1
 const CAM_MOVE_SPEED = 600
+const INFO_TIMER = .1
 
 
 onready var PLANET = preload("res://Planet.tscn")
 onready var sol_camera = $Camera2D
-onready var ui_buttons_load = $UI/Buttons/Load
-onready var ui_buttons_save = $UI/Buttons/Save
+onready var ui_buttons_load = $UI/HBoxContainer/Buttons/Load
+onready var ui_buttons_save = $UI/HBoxContainer/Buttons/Save
 onready	var planets_parent = $Planets
+onready var planet_info = $UI/HBoxContainer/PlanetInfo
+onready var info_img = $UI/HBoxContainer/PlanetInfo/HBoxContainer/PlanetIMG
+onready var info_name = $UI/HBoxContainer/PlanetInfo/HBoxContainer/VBoxContainer/PlanetName
+onready var info_speed = $UI/HBoxContainer/PlanetInfo/HBoxContainer/VBoxContainer/PlanetSpeed
+onready var info_position = $UI/HBoxContainer/PlanetInfo/HBoxContainer/VBoxContainer/PlanetPosition
+onready var info_mass = $UI/HBoxContainer/PlanetInfo/HBoxContainer/VBoxContainer/PlanetMass
 
 var planets = []
+var selected_planet = null
 var cam_move: Vector2 = Vector2.ZERO
 var rm_pressed = false
 var paused = false
+var info_timer: float = 0
 
 
 func _ready():
@@ -53,6 +62,10 @@ func generate_asteroids(num: int):
 
 
 func _process(delta):
+	info_timer += delta
+	if info_timer >= INFO_TIMER:
+		info_timer -= INFO_TIMER
+		update_info(false)
 	cam_move = Vector2.ZERO
 	if Input.is_action_pressed("ui_left"):
 		cam_move.x -= CAM_MOVE_SPEED * delta
@@ -66,6 +79,20 @@ func _process(delta):
 	if cam_move.length() > 0:
 		change_cam_parent(self)
 		sol_camera.global_position += cam_move
+
+
+func update_info(all_info: bool):
+	if selected_planet:
+		if all_info:
+			planet_info.show()
+			info_img.texture = selected_planet.get_node("Sprite").texture
+			info_name.text = "Name: " + selected_planet.name
+			info_mass.text = "Mass: " + str(stepify(selected_planet.mass, 0.01))
+		info_speed.text = "Speed: " + str(stepify(selected_planet.linear_velocity.length(), 0.1))
+		var g_p: Vector2 = selected_planet.global_position
+		info_position.text = "Position: (" + str(stepify(g_p.x, 0.1)) + ", " + str(stepify(g_p.y, 0.1)) + ")"
+#	elif planet_info.visible:
+#		planet_info.hide()
 
 
 func calc_mass_center():
@@ -96,7 +123,6 @@ func delete_planet(planet):
 	if sol_camera.get_parent() == planet:
 		change_cam_parent(self)
 		sol_camera.global_position = calc_mass_center()
-#		sol_camera.smoothing_enabled = true
 	planet.l2d.queue_free()
 	planet.queue_free()
 
@@ -108,9 +134,13 @@ func change_cam_parent(new_parent):
 		c_p.remove_child(sol_camera)
 		if new_parent == self:
 			sol_camera.position = c_p.position
+			selected_planet = null
+			planet_info.hide()
 		else:
 			sol_camera.position = Vector2.ZERO
+			selected_planet = new_parent
 		new_parent.add_child(sol_camera)
+		update_info(true)
 
 
 func get_planet_XY(xy: Vector2):
