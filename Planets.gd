@@ -21,8 +21,8 @@ onready	var planets_parent = $Planets
 onready var planet_info = $UI/HBoxContainer/PlanetInfo
 onready var info_img = $UI/HBoxContainer/PlanetInfo/HBoxContainer/PlanetIMG
 onready var info_name = $UI/HBoxContainer/PlanetInfo/HBoxContainer/VBoxContainer/PlanetName
-onready var info_speed = $UI/HBoxContainer/PlanetInfo/HBoxContainer/VBoxContainer/PlanetSpeed
-onready var info_position = $UI/HBoxContainer/PlanetInfo/HBoxContainer/VBoxContainer/PlanetPosition
+onready var info_speed = $UI/HBoxContainer/PlanetInfo/HBoxContainer/VBoxContainer2/PlanetSpeed
+onready var info_position = $UI/HBoxContainer/PlanetInfo/HBoxContainer/VBoxContainer2/PlanetPosition
 onready var info_mass = $UI/HBoxContainer/PlanetInfo/HBoxContainer/VBoxContainer/PlanetMass
 
 var planets = []
@@ -95,7 +95,7 @@ func update_info(all_info: bool):
 #		planet_info.hide()
 
 
-func calc_mass_center():
+func calc_mass_center() -> Vector2:
 	var sum1: Vector2 = Vector2.ZERO
 	var sum2: float = 0
 	for p in planets:
@@ -225,6 +225,8 @@ func load_orbits():
 	# project, so take care with this step.
 	change_cam_parent(self)
 	for p in planets:
+		planets_parent.remove_child(p)
+		planets_parent.remove_child(p.l2d)
 		p.l2d.queue_free()
 		p.queue_free()
 	planets.clear()
@@ -237,6 +239,7 @@ func load_orbits():
 		# Firstly, we need to create the object and add it to the tree and set its position.
 		var new_object = load(node_data["filename"]).instance()
 		get_node(node_data["parent"]).add_child(new_object)
+		new_object.set_name(node_data["name"])
 		new_object.position = Vector2(node_data["position_x"], node_data["position_y"])
 		new_object.linear_velocity = Vector2(node_data["linear_velocity_x"], node_data["linear_velocity_y"])
 		new_object.mass = node_data["mass"]
@@ -244,5 +247,6 @@ func load_orbits():
 		s.texture = load(node_data["Sprite_texture"])
 		s.scale = Vector2(node_data["Sprite_scale_x"], node_data["Sprite_scale_y"])
 		planets.append(new_object)
-	sort_planets()
 	load_file.close()
+	sort_planets()
+	sol_camera.global_position = calc_mass_center()

@@ -5,16 +5,8 @@
 [ext_resource path="res://Planets.gd" type="Script" id=3]
 [ext_resource path="res://IMG/Star.png" type="Texture" id=4]
 [ext_resource path="res://PlanetInfo.tscn" type="PackedScene" id=5]
-
-[sub_resource type="StreamTexture" id=1]
-resource_local_to_scene = true
-flags = 1
-load_path = "res://.import/P04.png-fd6625faa256a962dde9a201e07a6a3a.stex"
-
-[sub_resource type="StreamTexture" id=2]
-resource_local_to_scene = true
-flags = 1
-load_path = "res://.import/P04.png-fd6625faa256a962dde9a201e07a6a3a.stex"
+[ext_resource path="res://IMG/P01.png" type="Texture" id=6]
+[ext_resource path="res://IMG/P03.png" type="Texture" id=7]
 
 [node name="Orbits" type="Node2D"]
 pause_mode = 2
@@ -27,7 +19,7 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 10.0
-margin_top = -74.0
+margin_top = -42.0
 margin_right = -10.0
 margin_bottom = -10.0
 alignment = 2
@@ -38,7 +30,7 @@ anchor_top = 0.0
 anchor_bottom = 0.0
 margin_top = 0.0
 margin_right = 215.0
-margin_bottom = 64.0
+margin_bottom = 32.0
 
 [node name="Buttons" parent="UI/HBoxContainer" instance=ExtResource( 1 )]
 anchor_left = 0.0
@@ -46,9 +38,9 @@ anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 1376.0
-margin_top = 34.0
+margin_top = 2.0
 margin_right = 1580.0
-margin_bottom = 64.0
+margin_bottom = 32.0
 
 [node name="Planets" type="Node" parent="."]
 
@@ -80,7 +72,7 @@ linear_velocity = Vector2( 0, 100 )
 
 [node name="Sprite" parent="Planets/Planet" index="0"]
 scale = Vector2( 0.5, 0.5 )
-texture = SubResource( 1 )
+texture = ExtResource( 6 )
 
 [node name="Planet2" parent="Planets" instance=ExtResource( 2 )]
 position = Vector2( -250, 0 )
@@ -88,7 +80,7 @@ linear_velocity = Vector2( 0, -100 )
 
 [node name="Sprite" parent="Planets/Planet2" index="0"]
 scale = Vector2( 0.5, 0.5 )
-texture = SubResource( 2 )
+texture = ExtResource( 7 )
 
 [node name="Camera2D" type="Camera2D" parent="."]
 current = true

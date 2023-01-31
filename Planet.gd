@@ -91,6 +91,7 @@ func _physics_process(_delta):
 
 func save():
 	var save_dict = {
+		"name": name,
 		"filename": get_filename(),
 		"parent": get_parent().get_path(),
 		"position_x": position.x, # Vector2 is not supported by JSON
