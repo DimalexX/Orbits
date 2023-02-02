@@ -1,29 +1,33 @@
 extends Node2D
 
-const RND_GEN_ASTEROIDS_X = 700
-const RND_GEN_ASTEROIDS_Y = 400
-const RND_GEN_ASTEROIDS_SOL_DIST = 300
+const RND_GEN_ASTEROIDS_X = 1000
+const RND_GEN_ASTEROIDS_Y = 600
+const RND_GEN_ASTEROIDS_SOL_DIST = 400
 const RND_GEN_ASTEROIDS_MIN_SPEED = 30
-const RND_GEN_ASTEROIDS_MAX_SPEED = 60
+const RND_GEN_ASTEROIDS_MAX_SPEED = 50
 const RND_GEN_ASTEROIDS_ANGLE = 1
 const RND_GEN_ASTEROIDS_MIN_MASS = .01
-const RND_GEN_ASTEROIDS_MAX_MASS = 5
+const RND_GEN_ASTEROIDS_MAX_MASS = 1
 const CAM_ZOOM_SPEED = 0.1
 const CAM_MOVE_SPEED = 600
 const INFO_TIMER = .1
 
 
 onready var PLANET = preload("res://Planet.tscn")
+
 onready var sol_camera = $Camera2D
-onready var ui_buttons_load = $UI/HBoxContainer/Buttons/Load
-onready var ui_buttons_save = $UI/HBoxContainer/Buttons/Save
+#onready var v_box_container: VBoxContainer = $UI/VBoxContainer
 onready	var planets_parent = $Planets
-onready var planet_info = $UI/HBoxContainer/PlanetInfo
-onready var info_img = $UI/HBoxContainer/PlanetInfo/HBoxContainer/PlanetIMG
-onready var info_name = $UI/HBoxContainer/PlanetInfo/HBoxContainer/VBoxContainer/PlanetName
-onready var info_speed = $UI/HBoxContainer/PlanetInfo/HBoxContainer/VBoxContainer2/PlanetSpeed
-onready var info_position = $UI/HBoxContainer/PlanetInfo/HBoxContainer/VBoxContainer2/PlanetPosition
-onready var info_mass = $UI/HBoxContainer/PlanetInfo/HBoxContainer/VBoxContainer/PlanetMass
+
+onready var file_list: Control = $UI/VBoxContainer/HBoxContainer/FileLIst
+onready var file_item_list: ItemList = $UI/VBoxContainer/HBoxContainer/FileLIst/VBoxContainer/ItemList
+onready var buttons: HBoxContainer = $UI/VBoxContainer/HBoxContainer/Buttons
+onready var planet_info: Control = $UI/VBoxContainer/HBoxContainer/PlanetInfo
+onready var info_img = $UI/VBoxContainer/HBoxContainer/PlanetInfo/HBoxContainer/PlanetIMG
+onready var info_name = $UI/VBoxContainer/HBoxContainer/PlanetInfo/HBoxContainer/VBoxContainer/PlanetName
+onready var info_speed = $UI/VBoxContainer/HBoxContainer/PlanetInfo/HBoxContainer/VBoxContainer2/PlanetSpeed
+onready var info_position = $UI/VBoxContainer/HBoxContainer/PlanetInfo/HBoxContainer/VBoxContainer2/PlanetPosition
+onready var info_mass = $UI/VBoxContainer/HBoxContainer/PlanetInfo/HBoxContainer/VBoxContainer/PlanetMass
 
 var planets = []
 var selected_planet = null
@@ -31,6 +35,7 @@ var cam_move: Vector2 = Vector2.ZERO
 var rm_pressed = false
 var paused = false
 var info_timer: float = 0
+var dialog_on_screen: bool = false
 
 
 func _ready():
@@ -40,6 +45,7 @@ func _ready():
 	sort_planets()
 	sol_camera.global_position = calc_mass_center()
 	sol_camera.smoothing_enabled = true
+	OS.min_window_size = Vector2(500, 400)
 
 
 func generate_asteroids(num: int):
@@ -150,7 +156,7 @@ func get_planet_XY(xy: Vector2):
 	return null
 
 
-func _input(event):
+func _unhandled_input(event: InputEvent) -> void:
 	# scale change wheel control
 	if event is InputEventMouseButton:
 		match event.button_index:
@@ -177,23 +183,50 @@ func _input(event):
 		change_cam_parent(self)
 		sol_camera.global_position -= event.relative * sol_camera.zoom.x
 	elif event is InputEventKey:
-		if event.is_action_released("ui_select"):
+		if event.is_action_released("ui_select") and not dialog_on_screen:
 			change_pause()
+		elif event.is_action_released("ui_home"):
+			change_cam_parent(self)
+			sol_camera.global_position = calc_mass_center()
 
 
 func change_pause():
-	ui_buttons_load.disabled = paused
-	ui_buttons_save.disabled = paused
+	print("change_pause")
 	get_tree().paused = not paused
 	paused = not paused
+	buttons.visible = paused
 
 
 func _on_Load_pressed():
-	load_orbits()
+	print("_on_Load_pressed")
+	show_file_list()
 
 
 func _on_Save_pressed():
+	print("_on_Save_pressed")
 	save_orbits()
+
+
+func show_hide_file_list(_show):
+	if _show:
+		buttons.hide()
+		file_list.show()
+	else:
+		buttons.show()
+		file_list.hide()
+	dialog_on_screen = _show
+
+
+func _on_Cancel_pressed() -> void:
+	print("_on_Cancel_pressed")
+	show_hide_file_list(false)
+
+
+func _on_Select_pressed() -> void:
+	print("_on_Select_pressed")
+	if file_item_list.is_anything_selected():
+		load_orbits(file_item_list.get_item_text(file_item_list.get_selected_items()[0]))
+		show_hide_file_list(false)
 
 
 func save_orbits():
@@ -215,9 +248,33 @@ func save_orbits():
 	save_file.close()
 
 
-func load_orbits():
+func get_save_files(path):
+	var files = []
+	var dir = Directory.new()
+	if dir.open(path) == OK:
+		dir.list_dir_begin(true, true)
+		var file = dir.get_next()
+		while file != "":
+			if not dir.current_is_dir() and file.rsplit(".", true, 1)[1] == "save":
+				files.append(file)
+			file = dir.get_next()
+		dir.list_dir_end()
+	else:
+		print("An error occurred when trying to access the path.")
+	return files
+
+
+func show_file_list():
+	var save_files = get_save_files("user://")
+	file_item_list.clear()
+	show_hide_file_list(true)
+	for f in save_files:
+		file_item_list.add_item(f)
+
+
+func load_orbits(selected_file):
 	var load_file = File.new()
-	if not load_file.file_exists("user://orbits.save"):
+	if not load_file.file_exists("user://" + selected_file):
 		print("Error! We don't have a save to load.")
 		return
 	# We need to revert the game state so we're not cloning objects

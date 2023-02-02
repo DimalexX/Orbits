@@ -93,7 +93,7 @@ func _physics_process(_delta):
 	for pl in other_planets:
 		pl_global_position = pl.global_position
 		add_central_force(global_position.direction_to(pl_global_position)*
-			mass*pl.mass/global_position.distance_squared_to(pl_global_position)*66) #*0.66725)
+			mass*pl.mass/global_position.distance_squared_to(pl_global_position)*6.6725) #*0.66725)
 
 
 func save():
