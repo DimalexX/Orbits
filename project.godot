@@ -40,6 +40,10 @@ config/icon="res://icon.png"
 
 AntialiasedLine2DTexture="*res://addons/antialiased_line2d/texture.gd"
 
+[debug]
+
+settings/stdout/print_fps=true
+
 [display]
 
 window/size/width=1600
@@ -111,7 +115,7 @@ ui_down={
 
 [physics]
 
-common/physics_fps=600
+common/physics_fps=1000
 common/enable_pause_aware_picking=true
 
 [rendering]
