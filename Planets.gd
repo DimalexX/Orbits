@@ -12,16 +12,23 @@ const CAM_ZOOM_SPEED = 0.1
 const CAM_MOVE_SPEED = 600
 const INFO_TIMER = .1
 
+const USER_DIR_PATH = "user://"
+const SAVE_FILE_EXT = ".save"
+
 
 onready var PLANET = preload("res://Planet.tscn")
 
 onready var sol_camera = $Camera2D
-#onready var v_box_container: VBoxContainer = $UI/VBoxContainer
 onready	var planets_parent = $Planets
 
 onready var file_list: Control = $UI/VBoxContainer/HBoxContainer/FileLIst
 onready var file_item_list: ItemList = $UI/VBoxContainer/HBoxContainer/FileLIst/VBoxContainer/ItemList
+
+onready var file_name_edit: Control = $UI/VBoxContainer/HBoxContainer/FileNameEdit
+onready var file_name_line_edit: LineEdit = $UI/VBoxContainer/HBoxContainer/FileNameEdit/VBoxContainer/LineEdit
+
 onready var buttons: HBoxContainer = $UI/VBoxContainer/HBoxContainer/Buttons
+
 onready var planet_info: Control = $UI/VBoxContainer/HBoxContainer/PlanetInfo
 onready var info_img = $UI/VBoxContainer/HBoxContainer/PlanetInfo/HBoxContainer/PlanetIMG
 onready var info_name = $UI/VBoxContainer/HBoxContainer/PlanetInfo/HBoxContainer/VBoxContainer/PlanetName
@@ -97,8 +104,6 @@ func update_info(all_info: bool):
 		info_speed.text = "Speed: " + str(stepify(selected_planet.linear_velocity.length(), 0.1))
 		var g_p: Vector2 = selected_planet.global_position
 		info_position.text = "Position: (" + str(stepify(g_p.x, 0.1)) + ", " + str(stepify(g_p.y, 0.1)) + ")"
-#	elif planet_info.visible:
-#		planet_info.hide()
 
 
 func calc_mass_center() -> Vector2:
@@ -204,7 +209,8 @@ func _on_Load_pressed():
 
 func _on_Save_pressed():
 	print("_on_Save_pressed")
-	save_orbits()
+	file_name_line_edit.text = ""
+	show_hide_file_name_edit(true)
 
 
 func show_hide_file_list(_show):
@@ -217,9 +223,24 @@ func show_hide_file_list(_show):
 	dialog_on_screen = _show
 
 
+func show_hide_file_name_edit(_show):
+	if _show:
+		buttons.hide()
+		file_name_edit.show()
+	else:
+		buttons.show()
+		file_name_edit.hide()
+	dialog_on_screen = _show
+
+
 func _on_Cancel_pressed() -> void:
 	print("_on_Cancel_pressed")
 	show_hide_file_list(false)
+
+
+func _on_Save_Cancel_pressed() -> void:
+	print("_on_Save_Cancel_pressed")
+	show_hide_file_name_edit(false)
 
 
 func _on_Select_pressed() -> void:
@@ -229,9 +250,17 @@ func _on_Select_pressed() -> void:
 		show_hide_file_list(false)
 
 
-func save_orbits():
+func _on_Save_Select_pressed() -> void:
+	print("_on_Save_Select_pressed")
+	if file_name_line_edit.text.is_valid_filename():
+		save_orbits(file_name_line_edit.text)
+#		load_orbits(file_item_list.get_item_text(file_item_list.get_selected_items()[0]))
+		show_hide_file_name_edit(false)
+
+
+func save_orbits(file_name):
 	var save_file = File.new()
-	save_file.open("user://orbits.save", File.WRITE)
+	save_file.open(USER_DIR_PATH + file_name + SAVE_FILE_EXT, File.WRITE)
 	for p in planets:
 		# Check the node is an instanced scene so it can be instanced again during load.
 		if p.filename.empty():
@@ -255,7 +284,7 @@ func get_save_files(path):
 		dir.list_dir_begin(true, true)
 		var file = dir.get_next()
 		while file != "":
-			if not dir.current_is_dir() and file.rsplit(".", true, 1)[1] == "save":
+			if not dir.current_is_dir() and file.ends_with(SAVE_FILE_EXT):
 				files.append(file)
 			file = dir.get_next()
 		dir.list_dir_end()
@@ -265,7 +294,7 @@ func get_save_files(path):
 
 
 func show_file_list():
-	var save_files = get_save_files("user://")
+	var save_files = get_save_files(USER_DIR_PATH)
 	file_item_list.clear()
 	show_hide_file_list(true)
 	for f in save_files:
@@ -273,8 +302,9 @@ func show_file_list():
 
 
 func load_orbits(selected_file):
+	print(selected_file)
 	var load_file = File.new()
-	if not load_file.file_exists("user://" + selected_file):
+	if not load_file.file_exists(USER_DIR_PATH + selected_file):
 		print("Error! We don't have a save to load.")
 		return
 	# We need to revert the game state so we're not cloning objects
@@ -289,7 +319,7 @@ func load_orbits(selected_file):
 	planets.clear()
 	# Load the file line by line and process that dictionary to restore
 	# the object it represents.
-	load_file.open("user://orbits.save", File.READ)
+	load_file.open(USER_DIR_PATH + selected_file, File.READ)
 	while load_file.get_position() < load_file.get_len():
 		# Get the saved dictionary from the next line in the save file
 		var node_data = parse_json(load_file.get_line())

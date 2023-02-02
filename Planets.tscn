@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://Buttons.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Planet.tscn" type="PackedScene" id=2]
@@ -8,6 +8,7 @@
 [ext_resource path="res://IMG/P01.png" type="Texture" id=6]
 [ext_resource path="res://IMG/P03.png" type="Texture" id=7]
 [ext_resource path="res://FileLIst.tscn" type="PackedScene" id=8]
+[ext_resource path="res://FileNameEdit.tscn" type="PackedScene" id=9]
 
 [node name="Orbits" type="Node2D"]
 pause_mode = 2
@@ -45,13 +46,31 @@ anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 1406.0
-margin_top = 0.0
-margin_right = 1406.0
+margin_left = 1580.0
+margin_top = 32.0
+margin_right = 1580.0
 margin_bottom = 32.0
+size_flags_horizontal = 8
+size_flags_vertical = 8
+
+[node name="ItemList" parent="UI/VBoxContainer/HBoxContainer/FileLIst/VBoxContainer" index="0"]
+items = [ "Test 01", null, false, "Test 01", null, false, "Test 01", null, false, "Test 01", null, false, "Test 01", null, false ]
 
 [node name="Load" parent="UI/VBoxContainer/HBoxContainer/FileLIst/VBoxContainer/Buttons" index="0"]
 text = "Select"
+
+[node name="FileNameEdit" parent="UI/VBoxContainer/HBoxContainer" instance=ExtResource( 9 )]
+visible = false
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 1576.0
+margin_top = 32.0
+margin_right = 1576.0
+margin_bottom = 32.0
+size_flags_horizontal = 8
+size_flags_vertical = 8
 
 [node name="Buttons" parent="UI/VBoxContainer/HBoxContainer" instance=ExtResource( 1 )]
 visible = false
@@ -111,11 +130,15 @@ current = true
 
 [connection signal="pressed" from="UI/VBoxContainer/HBoxContainer/FileLIst/VBoxContainer/Buttons/Load" to="." method="_on_Select_pressed"]
 [connection signal="pressed" from="UI/VBoxContainer/HBoxContainer/FileLIst/VBoxContainer/Buttons/Save" to="." method="_on_Cancel_pressed"]
+[connection signal="pressed" from="UI/VBoxContainer/HBoxContainer/FileNameEdit/VBoxContainer/Buttons/Load" to="." method="_on_Save_Select_pressed"]
+[connection signal="pressed" from="UI/VBoxContainer/HBoxContainer/FileNameEdit/VBoxContainer/Buttons/Save" to="." method="_on_Save_Cancel_pressed"]
 [connection signal="pressed" from="UI/VBoxContainer/HBoxContainer/Buttons/Load" to="." method="_on_Load_pressed"]
 [connection signal="pressed" from="UI/VBoxContainer/HBoxContainer/Buttons/Save" to="." method="_on_Save_pressed"]
 
 [editable path="UI/VBoxContainer/HBoxContainer/FileLIst"]
 [editable path="UI/VBoxContainer/HBoxContainer/FileLIst/VBoxContainer/Buttons"]
+[editable path="UI/VBoxContainer/HBoxContainer/FileNameEdit"]
+[editable path="UI/VBoxContainer/HBoxContainer/FileNameEdit/VBoxContainer/Buttons"]
 [editable path="UI/VBoxContainer/HBoxContainer/Buttons"]
 [editable path="Planets/Sol"]
 [editable path="Planets/Sol2"]
