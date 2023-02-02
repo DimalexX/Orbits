@@ -62,12 +62,15 @@ func check_distance():
 	if dis > 5000:
 		orbits.delete_planet(self)
 
-var fps_count = 0
+#var fps_process = 0
+#var fps_phisics_process = 0
 func _process(delta):
+#	fps_process += 1
 	distance_timer += delta
 	if distance_timer >= 1:
-		if name == "Sol": print(fps_count)
-		fps_count = 0
+#		if name == "Sol": print(fps_process, "   ", fps_phisics_process)
+#		fps_process = 0
+#		fps_phisics_process = 0
 		distance_timer -= 1
 		check_distance()
 	count += delta
@@ -84,13 +87,13 @@ func _process(delta):
 
 
 func _physics_process(_delta):
-	fps_count += 1
+#	fps_phisics_process += 1
 	applied_force = Vector2.ZERO
 	var pl_global_position: Vector2
 	for pl in other_planets:
 		pl_global_position = pl.global_position
 		add_central_force(global_position.direction_to(pl_global_position)*
-			mass*pl.mass/global_position.distance_squared_to(pl_global_position)*10) #*0.66725)
+			mass*pl.mass/global_position.distance_squared_to(pl_global_position)*66) #*0.66725)
 
 
 func save():
