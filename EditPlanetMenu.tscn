@@ -1,0 +1,37 @@
+[gd_scene format=2]
+
+[node name="EditPlanetMenu" type="Control"]
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+margin_left = 10.0
+margin_top = 10.0
+margin_right = -10.0
+margin_bottom = -10.0
+alignment = 1
+
+[node name="BNew" type="Button" parent="VBoxContainer"]
+margin_right = 80.0
+margin_bottom = 25.0
+rect_min_size = Vector2( 80, 25 )
+text = "New"
+
+[node name="BEdit" type="Button" parent="VBoxContainer"]
+margin_top = 29.0
+margin_right = 80.0
+margin_bottom = 54.0
+rect_min_size = Vector2( 80, 25 )
+text = "Edit"
+
+[node name="BDelete" type="Button" parent="VBoxContainer"]
+margin_top = 58.0
+margin_right = 80.0
+margin_bottom = 83.0
+rect_min_size = Vector2( 80, 25 )
+text = "Delete"
+
+[node name="BCancel" type="Button" parent="VBoxContainer"]
+margin_top = 87.0
+margin_right = 80.0
+margin_bottom = 112.0
+rect_min_size = Vector2( 80, 25 )
+text = "Cancel"

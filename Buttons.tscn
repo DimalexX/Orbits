@@ -17,7 +17,7 @@ alignment = 2
 [node name="Load" type="Button" parent="."]
 margin_right = 80.0
 margin_bottom = 25.0
-rect_min_size = Vector2( 80, 24 )
+rect_min_size = Vector2( 80, 25 )
 focus_mode = 1
 enabled_focus_mode = 1
 text = "Load"
@@ -26,7 +26,7 @@ text = "Load"
 margin_left = 90.0
 margin_right = 170.0
 margin_bottom = 25.0
-rect_min_size = Vector2( 80, 24 )
+rect_min_size = Vector2( 80, 25 )
 focus_mode = 1
 enabled_focus_mode = 1
 text = "Save"

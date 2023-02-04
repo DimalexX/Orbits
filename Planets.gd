@@ -5,7 +5,7 @@ const RND_GEN_ASTEROIDS_Y = 600
 const RND_GEN_ASTEROIDS_SOL_DIST = 400
 const RND_GEN_ASTEROIDS_MIN_SPEED = 30
 const RND_GEN_ASTEROIDS_MAX_SPEED = 50
-const RND_GEN_ASTEROIDS_ANGLE = 1
+const RND_GEN_ASTEROIDS_ANGLE = .5
 const RND_GEN_ASTEROIDS_MIN_MASS = .01
 const RND_GEN_ASTEROIDS_MAX_MASS = 1
 const CAM_ZOOM_SPEED = 0.1
@@ -27,6 +27,11 @@ onready var file_item_list: ItemList = $UI/VBoxContainer/HBoxContainer/FileLIst/
 onready var file_name_edit: Control = $UI/VBoxContainer/HBoxContainer/FileNameEdit
 onready var file_name_line_edit: LineEdit = $UI/VBoxContainer/HBoxContainer/FileNameEdit/VBoxContainer/LineEdit
 
+onready var edit_planet_menu: Control = $UI/EditPlanetMenu
+onready var b_new: Button = $UI/EditPlanetMenu/VBoxContainer/BNew
+onready var b_edit: Button = $UI/EditPlanetMenu/VBoxContainer/BEdit
+onready var b_delete: Button = $UI/EditPlanetMenu/VBoxContainer/BDelete
+
 onready var buttons: HBoxContainer = $UI/VBoxContainer/HBoxContainer/Buttons
 
 onready var planet_info: Control = $UI/VBoxContainer/HBoxContainer/PlanetInfo
@@ -39,39 +44,46 @@ onready var info_mass = $UI/VBoxContainer/HBoxContainer/PlanetInfo/HBoxContainer
 var planets = []
 var selected_planet = null
 var cam_move: Vector2 = Vector2.ZERO
-var rm_pressed = false
+var lm_pressed = false
 var paused = false
 var info_timer: float = 0
 var dialog_on_screen: bool = false
+var edit_dialog_on_screen: bool = false
 
 
 func _ready():
 	randomize()
-	generate_asteroids(5)
 	planets = get_tree().get_nodes_in_group("Planet")
-	sort_planets()
+	generate_asteroids(5)
 	sol_camera.global_position = calc_mass_center()
 	sol_camera.smoothing_enabled = true
 	OS.min_window_size = Vector2(500, 400)
 
 
 func generate_asteroids(num: int):
-	var p
-	var v: Vector2
+	var coord: Vector2
+	var vel: Vector2
 	for _i in num:
-		p = PLANET.instance()
-		v = Vector2(rand_range(-RND_GEN_ASTEROIDS_X, RND_GEN_ASTEROIDS_X), 
+		coord = Vector2(rand_range(-RND_GEN_ASTEROIDS_X, RND_GEN_ASTEROIDS_X), 
 					rand_range(-RND_GEN_ASTEROIDS_Y, RND_GEN_ASTEROIDS_Y))
-		while v.distance_to(Vector2.ZERO) < RND_GEN_ASTEROIDS_SOL_DIST:
-			v = Vector2(rand_range(-RND_GEN_ASTEROIDS_X, RND_GEN_ASTEROIDS_X), 
+		while coord.distance_to(Vector2.ZERO) < RND_GEN_ASTEROIDS_SOL_DIST:
+			coord = Vector2(rand_range(-RND_GEN_ASTEROIDS_X, RND_GEN_ASTEROIDS_X), 
 						rand_range(-RND_GEN_ASTEROIDS_Y, RND_GEN_ASTEROIDS_Y))
-		p.transform.origin = v
-		v = Vector2(rand_range(RND_GEN_ASTEROIDS_MIN_SPEED, RND_GEN_ASTEROIDS_MAX_SPEED), 0).rotated(
-			v.angle_to_point(Vector2.ZERO) - rand_range(PI/2 - RND_GEN_ASTEROIDS_ANGLE, PI/2 + RND_GEN_ASTEROIDS_ANGLE))
-		p.linear_velocity = v
-		p.mass = rand_range(RND_GEN_ASTEROIDS_MIN_MASS, RND_GEN_ASTEROIDS_MAX_MASS)
-		p.get_node("Sprite").scale *= .3
-		planets_parent.add_child(p)
+		vel = Vector2(rand_range(RND_GEN_ASTEROIDS_MIN_SPEED, RND_GEN_ASTEROIDS_MAX_SPEED), 0).rotated(
+			coord.angle_to_point(Vector2.ZERO) - rand_range(PI/2 - RND_GEN_ASTEROIDS_ANGLE, PI/2 + RND_GEN_ASTEROIDS_ANGLE))
+		add_planet(coord, vel, rand_range(RND_GEN_ASTEROIDS_MIN_MASS, RND_GEN_ASTEROIDS_MAX_MASS))
+
+
+func add_planet(coord: Vector2, lin_vel: Vector2 = Vector2.ZERO, m: float = 1):
+	var p = PLANET.instance()
+	p.transform.origin = coord
+	p.linear_velocity = lin_vel
+	p.mass = m
+	p.get_node("Sprite").scale *= .3
+	planets_parent.add_child(p)
+	planets.append(p)
+	sort_planets()
+	return p
 
 
 func _process(delta):
@@ -79,19 +91,20 @@ func _process(delta):
 	if info_timer >= INFO_TIMER:
 		info_timer -= INFO_TIMER
 		update_info(false)
-	cam_move = Vector2.ZERO
-	if Input.is_action_pressed("ui_left"):
-		cam_move.x -= CAM_MOVE_SPEED * delta
-	if Input.is_action_pressed("ui_right"):
-		cam_move.x += CAM_MOVE_SPEED * delta
-	if Input.is_action_pressed("ui_up"):
-		cam_move.y -= CAM_MOVE_SPEED * delta
-	if Input.is_action_pressed("ui_down"):
-		cam_move.y += CAM_MOVE_SPEED * delta
-	
-	if cam_move.length() > 0:
-		change_cam_parent(self)
-		sol_camera.global_position += cam_move
+	if not edit_dialog_on_screen:
+		cam_move = Vector2.ZERO
+		if Input.is_action_pressed("ui_left"):
+			cam_move.x -= CAM_MOVE_SPEED * delta
+		if Input.is_action_pressed("ui_right"):
+			cam_move.x += CAM_MOVE_SPEED * delta
+		if Input.is_action_pressed("ui_up"):
+			cam_move.y -= CAM_MOVE_SPEED * delta
+		if Input.is_action_pressed("ui_down"):
+			cam_move.y += CAM_MOVE_SPEED * delta
+		
+		if cam_move.length() > 0:
+			change_cam_parent(self)
+			sol_camera.global_position += cam_move
 
 
 func update_info(all_info: bool):
@@ -123,19 +136,20 @@ func sort_by_mass(a, b):
 
 func sort_planets():
 	planets.sort_custom(self, "sort_by_mass")
+#	print(planets)
 	for p in planets:
 		p.set_other_planets(planets)
 
 
 func delete_planet(planet):
-	if planet == planets[0]: return
+#	if planet == planets[0]: return
 	planets.erase(planet)
-	sort_planets()
 	if sol_camera.get_parent() == planet:
 		change_cam_parent(self)
 		sol_camera.global_position = calc_mass_center()
 	planet.l2d.queue_free()
 	planet.queue_free()
+	sort_planets()
 
 
 func change_cam_parent(new_parent):
@@ -163,7 +177,7 @@ func get_planet_XY(xy: Vector2):
 
 func _unhandled_input(event: InputEvent) -> void:
 	# scale change wheel control
-	if event is InputEventMouseButton:
+	if event is InputEventMouseButton and not edit_dialog_on_screen:
 		match event.button_index:
 			BUTTON_WHEEL_DOWN:
 				if !event.pressed:
@@ -175,20 +189,24 @@ func _unhandled_input(event: InputEvent) -> void:
 				var new_zoom = max(sol_camera.zoom.x - CAM_ZOOM_SPEED, 0.5)
 				sol_camera.zoom = Vector2.ONE * new_zoom
 			BUTTON_LEFT:
-				if !event.pressed:
-					change_cam_parent(get_planet_XY(get_global_mouse_position()))
-			BUTTON_RIGHT:
 				if event.pressed:
-					rm_pressed = true
+					lm_pressed = true
 					sol_camera.smoothing_enabled = false
 				else:
-					rm_pressed = false
+					change_cam_parent(get_planet_XY(get_global_mouse_position()))
+					lm_pressed = false
 					sol_camera.smoothing_enabled = true
-	elif event is InputEventMouseMotion and rm_pressed:
+			BUTTON_RIGHT:
+				if event.pressed and paused:
+					click_position = get_global_mouse_position()
+					var pl = get_planet_XY(click_position)
+					if pl: change_cam_parent(pl)
+					show_edit_planet_menu(pl, get_viewport().get_mouse_position())
+	elif event is InputEventMouseMotion and lm_pressed:
 		change_cam_parent(self)
 		sol_camera.global_position -= event.relative * sol_camera.zoom.x
-	elif event is InputEventKey:
-		if event.is_action_released("ui_select") and not dialog_on_screen:
+	elif event is InputEventKey and not dialog_on_screen and not edit_dialog_on_screen:
+		if event.is_action_released("ui_select"):
 			change_pause()
 		elif event.is_action_released("ui_home"):
 			change_cam_parent(self)
@@ -211,6 +229,53 @@ func _on_Save_pressed():
 	print("_on_Save_pressed")
 	file_name_line_edit.text = ""
 	show_hide_file_name_edit(true)
+
+
+func show_edit_planet_menu(pl, coord):
+	if pl == null:
+		b_new.show()
+		b_edit.hide()
+		b_delete.hide()
+		edit_planet_menu.rect_position = coord + Vector2(10, 0)
+		edit_planet_menu.show()
+		edit_dialog_on_screen = true
+	else:
+		b_new.hide()
+		b_edit.show()
+		b_delete.show()
+		edit_planet_menu.rect_position = get_viewport_rect().size / 2 + Vector2(10, 0)
+		edit_planet_menu.show()
+		edit_dialog_on_screen = true
+
+
+func hide_edit_planet_menu():
+	edit_planet_menu.hide()
+	edit_dialog_on_screen = false
+
+
+func _on_BCancel_pressed() -> void:
+	hide_edit_planet_menu()
+
+
+func _on_BDelete_pressed() -> void:
+	delete_planet(selected_planet)
+	hide_edit_planet_menu()
+
+var click_position: Vector2 = Vector2.ZERO
+func _on_BNew_pressed() -> void:
+#	print(edit_planet_menu.get_canvas_transform())
+#	print(edit_planet_menu.get_global_rect())
+#	print(edit_planet_menu.get_global_transform())
+#	print(edit_planet_menu.get_global_transform_with_canvas())
+#	print(edit_planet_menu.get_rect())
+#	print(edit_planet_menu.get_transform())
+#	print(edit_planet_menu.get_viewport_transform())
+#	print(edit_planet_menu.rect_global_position)
+#	print(sol_camera.global_position)
+#	change_cam_parent(add_planet($UI.transform * edit_planet_menu.rect_global_position))
+	change_cam_parent(add_planet(click_position))
+	hide_edit_planet_menu()
+#	show_edit_dialog()
 
 
 func show_hide_file_list(_show):
