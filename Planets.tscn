@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://Buttons.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Planet.tscn" type="PackedScene" id=2]
@@ -10,6 +10,7 @@
 [ext_resource path="res://FileLIst.tscn" type="PackedScene" id=8]
 [ext_resource path="res://FileNameEdit.tscn" type="PackedScene" id=9]
 [ext_resource path="res://EditPlanetMenu.tscn" type="PackedScene" id=10]
+[ext_resource path="res://EditDialog.tscn" type="PackedScene" id=11]
 
 [node name="Orbits" type="Node2D"]
 pause_mode = 2
@@ -91,6 +92,9 @@ margin_top = 400.0
 margin_right = 800.0
 margin_bottom = 400.0
 
+[node name="EditDialog" parent="UI" instance=ExtResource( 11 )]
+visible = false
+
 [node name="Planets" type="Node" parent="."]
 
 [node name="Sol" parent="Planets" instance=ExtResource( 2 )]
@@ -143,8 +147,11 @@ current = true
 [connection signal="pressed" from="UI/VBoxContainer/HBoxContainer/Buttons/Load" to="." method="_on_Load_pressed"]
 [connection signal="pressed" from="UI/VBoxContainer/HBoxContainer/Buttons/Save" to="." method="_on_Save_pressed"]
 [connection signal="pressed" from="UI/EditPlanetMenu/VBoxContainer/BNew" to="." method="_on_BNew_pressed"]
+[connection signal="pressed" from="UI/EditPlanetMenu/VBoxContainer/BEdit" to="." method="_on_BEdit_pressed"]
 [connection signal="pressed" from="UI/EditPlanetMenu/VBoxContainer/BDelete" to="." method="_on_BDelete_pressed"]
 [connection signal="pressed" from="UI/EditPlanetMenu/VBoxContainer/BCancel" to="." method="_on_BCancel_pressed"]
+[connection signal="pressed" from="UI/EditDialog/PanelContainer/Panel/VBoxContainer/HBoxContainer8/BOK" to="." method="_on_BOK_pressed"]
+[connection signal="pressed" from="UI/EditDialog/PanelContainer/Panel/VBoxContainer/HBoxContainer8/BCancel" to="." method="_on_EditDialogBCancel_pressed"]
 
 [editable path="UI/VBoxContainer/HBoxContainer/FileLIst"]
 [editable path="UI/VBoxContainer/HBoxContainer/FileLIst/VBoxContainer/Buttons"]
@@ -152,6 +159,7 @@ current = true
 [editable path="UI/VBoxContainer/HBoxContainer/FileNameEdit/VBoxContainer/Buttons"]
 [editable path="UI/VBoxContainer/HBoxContainer/Buttons"]
 [editable path="UI/EditPlanetMenu"]
+[editable path="UI/EditDialog"]
 [editable path="Planets/Sol"]
 [editable path="Planets/Sol2"]
 [editable path="Planets/Planet"]

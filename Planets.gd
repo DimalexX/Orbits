@@ -32,6 +32,16 @@ onready var b_new: Button = $UI/EditPlanetMenu/VBoxContainer/BNew
 onready var b_edit: Button = $UI/EditPlanetMenu/VBoxContainer/BEdit
 onready var b_delete: Button = $UI/EditPlanetMenu/VBoxContainer/BDelete
 
+onready var edit_dialog: Control = $UI/EditDialog
+onready var edit_dialog_le_name: LineEdit = $UI/EditDialog/PanelContainer/Panel/VBoxContainer/HBoxContainer/LEName
+onready var edit_dialog_le_posx: LineEdit = $UI/EditDialog/PanelContainer/Panel/VBoxContainer/HBoxContainer2/LEPosX
+onready var edit_dialog_le_posy: LineEdit = $UI/EditDialog/PanelContainer/Panel/VBoxContainer/HBoxContainer3/LEPosY
+onready var edit_dialog_le_velx: LineEdit = $UI/EditDialog/PanelContainer/Panel/VBoxContainer/HBoxContainer4/LEVelX
+onready var edit_dialog_le_vely: LineEdit = $UI/EditDialog/PanelContainer/Panel/VBoxContainer/HBoxContainer5/LEVelY
+onready var edit_dialog_le_mass: LineEdit = $UI/EditDialog/PanelContainer/Panel/VBoxContainer/HBoxContainer6/LEMass
+onready var edit_dialog_le_scale: LineEdit = $UI/EditDialog/PanelContainer/Panel/VBoxContainer/HBoxContainer7/LEScale
+#onready var edit_dialog_lename: LineEdit = $UI/EditDialog/PanelContainer/Panel/VBoxContainer/HBoxContainer8/LEName
+
 onready var buttons: HBoxContainer = $UI/VBoxContainer/HBoxContainer/Buttons
 
 onready var planet_info: Control = $UI/VBoxContainer/HBoxContainer/PlanetInfo
@@ -49,12 +59,14 @@ var paused = false
 var info_timer: float = 0
 var dialog_on_screen: bool = false
 var edit_dialog_on_screen: bool = false
+var click_position: Vector2 = Vector2.ZERO
 
 
 func _ready():
 	randomize()
 	planets = get_tree().get_nodes_in_group("Planet")
-	generate_asteroids(5)
+	sort_planets()
+	generate_asteroids(0)
 	sol_camera.global_position = calc_mass_center()
 	sol_camera.smoothing_enabled = true
 	OS.min_window_size = Vector2(500, 400)
@@ -136,7 +148,7 @@ func sort_by_mass(a, b):
 
 func sort_planets():
 	planets.sort_custom(self, "sort_by_mass")
-#	print(planets)
+	print("sort_planets: ", planets.size())
 	for p in planets:
 		p.set_other_planets(planets)
 
@@ -261,7 +273,25 @@ func _on_BDelete_pressed() -> void:
 	delete_planet(selected_planet)
 	hide_edit_planet_menu()
 
-var click_position: Vector2 = Vector2.ZERO
+
+func show_edit_dialog():
+	edit_planet_menu.hide()
+	edit_dialog_le_name.text = selected_planet.name
+	edit_dialog_le_posx.text = str(selected_planet.global_position.x)
+	edit_dialog_le_posy.text = str(selected_planet.global_position.y)
+	edit_dialog_le_velx.text = str(selected_planet.linear_velocity.x)
+	edit_dialog_le_vely.text = str(selected_planet.linear_velocity.y)
+	edit_dialog_le_mass.text = str(selected_planet.mass)
+	edit_dialog_le_scale.text = str(selected_planet.get_node("Sprite").scale.x)
+	edit_dialog.rect_position = edit_planet_menu.rect_position
+	edit_dialog.show()
+
+
+func hide_edit_dialog():
+	edit_dialog.hide()
+	edit_dialog_on_screen = false
+
+
 func _on_BNew_pressed() -> void:
 #	print(edit_planet_menu.get_canvas_transform())
 #	print(edit_planet_menu.get_global_rect())
@@ -271,11 +301,34 @@ func _on_BNew_pressed() -> void:
 #	print(edit_planet_menu.get_transform())
 #	print(edit_planet_menu.get_viewport_transform())
 #	print(edit_planet_menu.rect_global_position)
-#	print(sol_camera.global_position)
+#	print(get_global_transform_with_canvas())
+#	print(get_global_transform())
+#	print(get_viewport_transform())
 #	change_cam_parent(add_planet($UI.transform * edit_planet_menu.rect_global_position))
+#		ui_pos = world.get_canvas_transform().xform(world_pos) dalexeev
+#		world_pos = world.get_canvas_transform().affine_inverse().xform(ui_pos)
 	change_cam_parent(add_planet(click_position))
 	hide_edit_planet_menu()
-#	show_edit_dialog()
+	show_edit_dialog()
+
+
+func _on_BEdit_pressed() -> void:
+	show_edit_dialog()
+
+
+func _on_EditDialogBCancel_pressed() -> void:
+	hide_edit_dialog()
+
+
+func _on_BOK_pressed() -> void:
+	edit_planet_menu.hide()
+	selected_planet.name = edit_dialog_le_name.text
+	selected_planet.global_position = Vector2(float(edit_dialog_le_posx.text), float(edit_dialog_le_posy.text))
+	selected_planet.linear_velocity = Vector2(float(edit_dialog_le_velx.text), float(edit_dialog_le_vely.text))
+	selected_planet.mass = float(edit_dialog_le_mass.text)
+	selected_planet.get_node("Sprite").scale = Vector2(float(edit_dialog_le_scale.text), float(edit_dialog_le_scale.text))
+	hide_edit_dialog()
+	update_info(true)
 
 
 func show_hide_file_list(_show):
