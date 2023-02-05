@@ -9,7 +9,7 @@ const RND_GEN_ASTEROIDS_ANGLE = .5
 const RND_GEN_ASTEROIDS_MIN_MASS = .01
 const RND_GEN_ASTEROIDS_MAX_MASS = 1
 const CAM_ZOOM_SPEED = 0.1
-const CAM_MOVE_SPEED = 600
+const CAM_MOVE_SPEED = 500
 const INFO_TIMER = .1
 
 const USER_DIR_PATH = "user://"
@@ -33,14 +33,23 @@ onready var b_edit: Button = $UI/EditPlanetMenu/VBoxContainer/BEdit
 onready var b_delete: Button = $UI/EditPlanetMenu/VBoxContainer/BDelete
 
 onready var edit_dialog: Control = $UI/EditDialog
-onready var edit_dialog_le_name: LineEdit = $UI/EditDialog/PanelContainer/Panel/VBoxContainer/HBoxContainer/LEName
-onready var edit_dialog_le_posx: LineEdit = $UI/EditDialog/PanelContainer/Panel/VBoxContainer/HBoxContainer2/LEPosX
-onready var edit_dialog_le_posy: LineEdit = $UI/EditDialog/PanelContainer/Panel/VBoxContainer/HBoxContainer3/LEPosY
-onready var edit_dialog_le_velx: LineEdit = $UI/EditDialog/PanelContainer/Panel/VBoxContainer/HBoxContainer4/LEVelX
-onready var edit_dialog_le_vely: LineEdit = $UI/EditDialog/PanelContainer/Panel/VBoxContainer/HBoxContainer5/LEVelY
-onready var edit_dialog_le_mass: LineEdit = $UI/EditDialog/PanelContainer/Panel/VBoxContainer/HBoxContainer6/LEMass
-onready var edit_dialog_le_scale: LineEdit = $UI/EditDialog/PanelContainer/Panel/VBoxContainer/HBoxContainer7/LEScale
-#onready var edit_dialog_lename: LineEdit = $UI/EditDialog/PanelContainer/Panel/VBoxContainer/HBoxContainer8/LEName
+onready var edit_dialog_tbutton: TextureButton = $UI/EditDialog/PanelContainer/Panel/VBox/HBox9/TextureButton
+onready var edit_dialog_le_name: LineEdit = $UI/EditDialog/PanelContainer/Panel/VBox/HBox9/VBox/HBox/LEName
+onready var edit_dialog_le_mass: LineEdit = $UI/EditDialog/PanelContainer/Panel/VBox/HBox9/VBox/HBox6/LEMass
+onready var edit_dialog_le_posx: LineEdit = $UI/EditDialog/PanelContainer/Panel/VBox/HBox2/LEPosX
+onready var edit_dialog_le_posy: LineEdit = $UI/EditDialog/PanelContainer/Panel/VBox/HBox3/LEPosY
+onready var edit_dialog_le_velx: LineEdit = $UI/EditDialog/PanelContainer/Panel/VBox/HBox4/LEVelX
+onready var edit_dialog_le_vely: LineEdit = $UI/EditDialog/PanelContainer/Panel/VBox/HBox5/LEVelY
+onready var edit_dialog_le_scale: LineEdit = $UI/EditDialog/PanelContainer/Panel/VBox/HBox7/LEScale
+
+onready var edit_dialog_grid = $UI/EditDialog/PanelContainer/Panel/VBox/Grid
+onready var edit_dialog_hbox2 = $UI/EditDialog/PanelContainer/Panel/VBox/HBox2
+onready var edit_dialog_hbox3 = $UI/EditDialog/PanelContainer/Panel/VBox/HBox3
+onready var edit_dialog_hbox4 = $UI/EditDialog/PanelContainer/Panel/VBox/HBox4
+onready var edit_dialog_hbox5 = $UI/EditDialog/PanelContainer/Panel/VBox/HBox5
+onready var edit_dialog_hbox7 = $UI/EditDialog/PanelContainer/Panel/VBox/HBox7
+onready var edit_dialog_hbox9 = $UI/EditDialog/PanelContainer/Panel/VBox/HBox9
+onready var edit_dialog_bok = $UI/EditDialog/PanelContainer/Panel/VBox/HBox8/BOK
 
 onready var buttons: HBoxContainer = $UI/VBoxContainer/HBoxContainer/Buttons
 
@@ -103,20 +112,9 @@ func _process(delta):
 	if info_timer >= INFO_TIMER:
 		info_timer -= INFO_TIMER
 		update_info(false)
-	if not edit_dialog_on_screen:
-		cam_move = Vector2.ZERO
-		if Input.is_action_pressed("ui_left"):
-			cam_move.x -= CAM_MOVE_SPEED * delta
-		if Input.is_action_pressed("ui_right"):
-			cam_move.x += CAM_MOVE_SPEED * delta
-		if Input.is_action_pressed("ui_up"):
-			cam_move.y -= CAM_MOVE_SPEED * delta
-		if Input.is_action_pressed("ui_down"):
-			cam_move.y += CAM_MOVE_SPEED * delta
-		
-		if cam_move.length() > 0:
-			change_cam_parent(self)
-			sol_camera.global_position += cam_move
+	if cam_move.length() > 0:
+		change_cam_parent(self)
+		sol_camera.global_position += cam_move * delta
 
 
 func update_info(all_info: bool):
@@ -132,6 +130,7 @@ func update_info(all_info: bool):
 
 
 func calc_mass_center() -> Vector2:
+	if planets.size() == 0: return Vector2.ZERO
 	var sum1: Vector2 = Vector2.ZERO
 	var sum2: float = 0
 	for p in planets:
@@ -156,6 +155,7 @@ func sort_planets():
 func delete_planet(planet):
 #	if planet == planets[0]: return
 	planets.erase(planet)
+	planet.other_planets.clear()
 	if sol_camera.get_parent() == planet:
 		change_cam_parent(self)
 		sol_camera.global_position = calc_mass_center()
@@ -223,6 +223,15 @@ func _unhandled_input(event: InputEvent) -> void:
 		elif event.is_action_released("ui_home"):
 			change_cam_parent(self)
 			sol_camera.global_position = calc_mass_center()
+		cam_move = Vector2.ZERO
+		if Input.is_action_pressed("ui_left"):
+			cam_move.x -= CAM_MOVE_SPEED
+		if Input.is_action_pressed("ui_right"):
+			cam_move.x += CAM_MOVE_SPEED
+		if Input.is_action_pressed("ui_up"):
+			cam_move.y -= CAM_MOVE_SPEED
+		if Input.is_action_pressed("ui_down"):
+			cam_move.y += CAM_MOVE_SPEED
 
 
 func change_pause():
@@ -276,7 +285,9 @@ func _on_BDelete_pressed() -> void:
 
 func show_edit_dialog():
 	edit_planet_menu.hide()
+	change_edit_dialog(false)
 	edit_dialog_le_name.text = selected_planet.name
+	edit_dialog_tbutton.texture_normal = selected_planet.get_node("Sprite").texture
 	edit_dialog_le_posx.text = str(selected_planet.global_position.x)
 	edit_dialog_le_posy.text = str(selected_planet.global_position.y)
 	edit_dialog_le_velx.text = str(selected_planet.linear_velocity.x)
@@ -293,22 +304,8 @@ func hide_edit_dialog():
 
 
 func _on_BNew_pressed() -> void:
-#	print(edit_planet_menu.get_canvas_transform())
-#	print(edit_planet_menu.get_global_rect())
-#	print(edit_planet_menu.get_global_transform())
-#	print(edit_planet_menu.get_global_transform_with_canvas())
-#	print(edit_planet_menu.get_rect())
-#	print(edit_planet_menu.get_transform())
-#	print(edit_planet_menu.get_viewport_transform())
-#	print(edit_planet_menu.rect_global_position)
-#	print(get_global_transform_with_canvas())
-#	print(get_global_transform())
-#	print(get_viewport_transform())
-#	change_cam_parent(add_planet($UI.transform * edit_planet_menu.rect_global_position))
-#		ui_pos = world.get_canvas_transform().xform(world_pos) dalexeev
-#		world_pos = world.get_canvas_transform().affine_inverse().xform(ui_pos)
 	change_cam_parent(add_planet(click_position))
-	hide_edit_planet_menu()
+#	hide_edit_planet_menu()
 	show_edit_dialog()
 
 
@@ -316,8 +313,32 @@ func _on_BEdit_pressed() -> void:
 	show_edit_dialog()
 
 
+func change_edit_dialog(img_select):
+	if img_select:
+		edit_dialog_hbox2.hide()
+		edit_dialog_hbox3.hide()
+		edit_dialog_hbox4.hide()
+		edit_dialog_hbox5.hide()
+		edit_dialog_hbox7.hide()
+		edit_dialog_hbox9.hide()
+		edit_dialog_bok.hide()
+		edit_dialog_grid.show()
+	else:
+		edit_dialog_grid.hide()
+		edit_dialog_hbox2.show()
+		edit_dialog_hbox3.show()
+		edit_dialog_hbox4.show()
+		edit_dialog_hbox5.show()
+		edit_dialog_hbox7.show()
+		edit_dialog_hbox9.show()
+		edit_dialog_bok.show()
+
+
 func _on_EditDialogBCancel_pressed() -> void:
-	hide_edit_dialog()
+	if edit_dialog_grid.visible:
+		change_edit_dialog(false)
+	else:
+		hide_edit_dialog()
 
 
 func _on_BOK_pressed() -> void:
@@ -326,7 +347,9 @@ func _on_BOK_pressed() -> void:
 	selected_planet.global_position = Vector2(float(edit_dialog_le_posx.text), float(edit_dialog_le_posy.text))
 	selected_planet.linear_velocity = Vector2(float(edit_dialog_le_velx.text), float(edit_dialog_le_vely.text))
 	selected_planet.mass = float(edit_dialog_le_mass.text)
-	selected_planet.get_node("Sprite").scale = Vector2(float(edit_dialog_le_scale.text), float(edit_dialog_le_scale.text))
+	var s = selected_planet.get_node("Sprite") as Sprite
+	s.texture = edit_dialog_tbutton.texture_normal
+	s.scale = Vector2(float(edit_dialog_le_scale.text), float(edit_dialog_le_scale.text))
 	hide_edit_dialog()
 	update_info(true)
 
@@ -372,8 +395,16 @@ func _on_Save_Select_pressed() -> void:
 	print("_on_Save_Select_pressed")
 	if file_name_line_edit.text.is_valid_filename():
 		save_orbits(file_name_line_edit.text)
-#		load_orbits(file_item_list.get_item_text(file_item_list.get_selected_items()[0]))
 		show_hide_file_name_edit(false)
+
+
+func _on_TextureButton_pressed() -> void:
+	change_edit_dialog(true)
+
+
+func _on_TBX_pressed(arg_0: String) -> void:
+	edit_dialog_tbutton.texture_normal = load("res://IMG/"+ arg_0 + ".png")
+	change_edit_dialog(false)
 
 
 func save_orbits(file_name):

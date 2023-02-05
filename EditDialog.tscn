@@ -1,180 +1,425 @@
-[gd_scene format=2]
+[gd_scene load_steps=17 format=2]
+
+[ext_resource path="res://IMG/P04.png" type="Texture" id=1]
+[ext_resource path="res://IMG/P01.png" type="Texture" id=2]
+[ext_resource path="res://IMG/P03.png" type="Texture" id=3]
+[ext_resource path="res://IMG/P15.png" type="Texture" id=4]
+[ext_resource path="res://IMG/Star.png" type="Texture" id=5]
+[ext_resource path="res://IMG/P05.png" type="Texture" id=6]
+[ext_resource path="res://IMG/P06.png" type="Texture" id=7]
+[ext_resource path="res://IMG/P02.png" type="Texture" id=8]
+[ext_resource path="res://IMG/P07.png" type="Texture" id=9]
+[ext_resource path="res://IMG/P08.png" type="Texture" id=10]
+[ext_resource path="res://IMG/P09.png" type="Texture" id=11]
+[ext_resource path="res://IMG/P11.png" type="Texture" id=12]
+[ext_resource path="res://IMG/P12.png" type="Texture" id=13]
+[ext_resource path="res://IMG/P10.png" type="Texture" id=14]
+[ext_resource path="res://IMG/P13.png" type="Texture" id=15]
+[ext_resource path="res://IMG/P14.png" type="Texture" id=16]
 
 [node name="EditDialog" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_right = -1600.0
 margin_bottom = -900.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_right = 223.0
+margin_right = 250.0
 margin_bottom = 285.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
 
 [node name="Panel" type="Panel" parent="PanelContainer"]
 margin_left = 7.0
 margin_top = 7.0
-margin_right = 216.0
+margin_right = 243.0
 margin_bottom = 278.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/Panel"]
+[node name="VBox" type="VBoxContainer" parent="PanelContainer/Panel"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/Panel/VBoxContainer"]
-margin_right = 209.0
-margin_bottom = 29.0
+[node name="HBox9" type="HBoxContainer" parent="PanelContainer/Panel/VBox"]
+visible = false
+margin_right = 236.0
+margin_bottom = 62.0
 
-[node name="Label" type="Label" parent="PanelContainer/Panel/VBoxContainer/HBoxContainer"]
+[node name="TextureButton" type="TextureButton" parent="PanelContainer/Panel/VBox/HBox9"]
+margin_left = 9.0
+margin_top = 7.0
+margin_right = 57.0
+margin_bottom = 55.0
+rect_min_size = Vector2( 48, 48 )
+size_flags_horizontal = 6
+size_flags_vertical = 6
+texture_normal = ExtResource( 1 )
+expand = true
+
+[node name="VBox" type="VBoxContainer" parent="PanelContainer/Panel/VBox/HBox9"]
+margin_left = 70.0
+margin_right = 236.0
+margin_bottom = 62.0
+
+[node name="HBox" type="HBoxContainer" parent="PanelContainer/Panel/VBox/HBox9/VBox"]
+margin_right = 166.0
+margin_bottom = 29.0
+alignment = 2
+
+[node name="Label" type="Label" parent="PanelContainer/Panel/VBox/HBox9/VBox/HBox"]
 margin_top = 5.0
-margin_right = 85.0
+margin_right = 42.0
 margin_bottom = 24.0
-rect_min_size = Vector2( 85, 0 )
+size_flags_horizontal = 8
+size_flags_stretch_ratio = 0.3
 text = "Name:"
 align = 2
 
-[node name="LEName" type="LineEdit" parent="PanelContainer/Panel/VBoxContainer/HBoxContainer"]
-margin_left = 89.0
-margin_right = 209.0
+[node name="LEName" type="LineEdit" parent="PanelContainer/Panel/VBox/HBox9/VBox/HBox"]
+margin_left = 46.0
+margin_right = 166.0
 margin_bottom = 29.0
-size_flags_horizontal = 3
+rect_min_size = Vector2( 120, 0 )
+size_flags_horizontal = 8
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="PanelContainer/Panel/VBoxContainer"]
+[node name="HBox6" type="HBoxContainer" parent="PanelContainer/Panel/VBox/HBox9/VBox"]
 margin_top = 33.0
-margin_right = 209.0
+margin_right = 166.0
 margin_bottom = 62.0
 
-[node name="Label" type="Label" parent="PanelContainer/Panel/VBoxContainer/HBoxContainer2"]
+[node name="Label" type="Label" parent="PanelContainer/Panel/VBox/HBox9/VBox/HBox6"]
+margin_left = 4.0
 margin_top = 5.0
-margin_right = 85.0
+margin_right = 42.0
 margin_bottom = 24.0
-rect_min_size = Vector2( 85, 0 )
-text = "Position (X):"
-align = 2
-
-[node name="LEPosX" type="LineEdit" parent="PanelContainer/Panel/VBoxContainer/HBoxContainer2"]
-margin_left = 89.0
-margin_right = 209.0
-margin_bottom = 29.0
-size_flags_horizontal = 3
-
-[node name="HBoxContainer3" type="HBoxContainer" parent="PanelContainer/Panel/VBoxContainer"]
-margin_top = 66.0
-margin_right = 209.0
-margin_bottom = 95.0
-
-[node name="Label" type="Label" parent="PanelContainer/Panel/VBoxContainer/HBoxContainer3"]
-margin_top = 5.0
-margin_right = 85.0
-margin_bottom = 24.0
-rect_min_size = Vector2( 85, 0 )
-text = "Position (Y):"
-align = 2
-
-[node name="LEPosY" type="LineEdit" parent="PanelContainer/Panel/VBoxContainer/HBoxContainer3"]
-margin_left = 89.0
-margin_right = 209.0
-margin_bottom = 29.0
-size_flags_horizontal = 3
-
-[node name="HBoxContainer4" type="HBoxContainer" parent="PanelContainer/Panel/VBoxContainer"]
-margin_top = 99.0
-margin_right = 209.0
-margin_bottom = 128.0
-
-[node name="Label" type="Label" parent="PanelContainer/Panel/VBoxContainer/HBoxContainer4"]
-margin_top = 5.0
-margin_right = 85.0
-margin_bottom = 24.0
-rect_min_size = Vector2( 85, 0 )
-text = "Velocity (X):"
-align = 2
-
-[node name="LEVelX" type="LineEdit" parent="PanelContainer/Panel/VBoxContainer/HBoxContainer4"]
-margin_left = 89.0
-margin_right = 209.0
-margin_bottom = 29.0
-size_flags_horizontal = 3
-
-[node name="HBoxContainer5" type="HBoxContainer" parent="PanelContainer/Panel/VBoxContainer"]
-margin_top = 132.0
-margin_right = 209.0
-margin_bottom = 161.0
-
-[node name="Label" type="Label" parent="PanelContainer/Panel/VBoxContainer/HBoxContainer5"]
-margin_top = 5.0
-margin_right = 85.0
-margin_bottom = 24.0
-rect_min_size = Vector2( 85, 0 )
-text = "Velocity (Y):"
-align = 2
-
-[node name="LEVelY" type="LineEdit" parent="PanelContainer/Panel/VBoxContainer/HBoxContainer5"]
-margin_left = 89.0
-margin_right = 209.0
-margin_bottom = 29.0
-size_flags_horizontal = 3
-
-[node name="HBoxContainer6" type="HBoxContainer" parent="PanelContainer/Panel/VBoxContainer"]
-margin_top = 165.0
-margin_right = 209.0
-margin_bottom = 194.0
-
-[node name="Label" type="Label" parent="PanelContainer/Panel/VBoxContainer/HBoxContainer6"]
-margin_top = 5.0
-margin_right = 85.0
-margin_bottom = 24.0
-rect_min_size = Vector2( 85, 0 )
+size_flags_horizontal = 10
 text = "Mass:"
 align = 2
 
-[node name="LEMass" type="LineEdit" parent="PanelContainer/Panel/VBoxContainer/HBoxContainer6"]
-margin_left = 89.0
-margin_right = 209.0
+[node name="LEMass" type="LineEdit" parent="PanelContainer/Panel/VBox/HBox9/VBox/HBox6"]
+margin_left = 46.0
+margin_right = 166.0
 margin_bottom = 29.0
-size_flags_horizontal = 3
+rect_min_size = Vector2( 120, 0 )
+size_flags_horizontal = 10
 
-[node name="HBoxContainer7" type="HBoxContainer" parent="PanelContainer/Panel/VBoxContainer"]
+[node name="HBox2" type="HBoxContainer" parent="PanelContainer/Panel/VBox"]
+visible = false
+margin_top = 66.0
+margin_right = 236.0
+margin_bottom = 95.0
+
+[node name="Label" type="Label" parent="PanelContainer/Panel/VBox/HBox2"]
+margin_left = 7.0
+margin_top = 5.0
+margin_right = 87.0
+margin_bottom = 24.0
+size_flags_horizontal = 10
+text = "Position (X):"
+align = 2
+
+[node name="LEPosX" type="LineEdit" parent="PanelContainer/Panel/VBox/HBox2"]
+margin_left = 91.0
+margin_right = 236.0
+margin_bottom = 29.0
+rect_min_size = Vector2( 145, 0 )
+size_flags_horizontal = 10
+
+[node name="HBox3" type="HBoxContainer" parent="PanelContainer/Panel/VBox"]
+visible = false
+margin_top = 99.0
+margin_right = 236.0
+margin_bottom = 128.0
+
+[node name="Label" type="Label" parent="PanelContainer/Panel/VBox/HBox3"]
+margin_left = 8.0
+margin_top = 5.0
+margin_right = 87.0
+margin_bottom = 24.0
+size_flags_horizontal = 10
+text = "Position (Y):"
+align = 2
+
+[node name="LEPosY" type="LineEdit" parent="PanelContainer/Panel/VBox/HBox3"]
+margin_left = 91.0
+margin_right = 236.0
+margin_bottom = 29.0
+rect_min_size = Vector2( 145, 0 )
+size_flags_horizontal = 10
+
+[node name="HBox4" type="HBoxContainer" parent="PanelContainer/Panel/VBox"]
+visible = false
+margin_top = 132.0
+margin_right = 236.0
+margin_bottom = 161.0
+
+[node name="Label" type="Label" parent="PanelContainer/Panel/VBox/HBox4"]
+margin_left = 8.0
+margin_top = 5.0
+margin_right = 87.0
+margin_bottom = 24.0
+size_flags_horizontal = 10
+text = "Velocity (X):"
+align = 2
+
+[node name="LEVelX" type="LineEdit" parent="PanelContainer/Panel/VBox/HBox4"]
+margin_left = 91.0
+margin_right = 236.0
+margin_bottom = 29.0
+rect_min_size = Vector2( 145, 0 )
+size_flags_horizontal = 10
+
+[node name="HBox5" type="HBoxContainer" parent="PanelContainer/Panel/VBox"]
+visible = false
+margin_top = 165.0
+margin_right = 236.0
+margin_bottom = 194.0
+
+[node name="Label" type="Label" parent="PanelContainer/Panel/VBox/HBox5"]
+margin_left = 9.0
+margin_top = 5.0
+margin_right = 87.0
+margin_bottom = 24.0
+size_flags_horizontal = 10
+text = "Velocity (Y):"
+align = 2
+
+[node name="LEVelY" type="LineEdit" parent="PanelContainer/Panel/VBox/HBox5"]
+margin_left = 91.0
+margin_right = 236.0
+margin_bottom = 29.0
+rect_min_size = Vector2( 145, 0 )
+size_flags_horizontal = 10
+
+[node name="HBox7" type="HBoxContainer" parent="PanelContainer/Panel/VBox"]
+visible = false
 margin_top = 198.0
-margin_right = 209.0
+margin_right = 236.0
 margin_bottom = 227.0
 
-[node name="Label" type="Label" parent="PanelContainer/Panel/VBoxContainer/HBoxContainer7"]
+[node name="Label" type="Label" parent="PanelContainer/Panel/VBox/HBox7"]
+margin_left = 5.0
 margin_top = 5.0
-margin_right = 85.0
+margin_right = 87.0
 margin_bottom = 24.0
-rect_min_size = Vector2( 85, 0 )
+size_flags_horizontal = 10
 text = "Image scale:"
 align = 2
 
-[node name="LEScale" type="LineEdit" parent="PanelContainer/Panel/VBoxContainer/HBoxContainer7"]
-margin_left = 89.0
-margin_right = 209.0
+[node name="LEScale" type="LineEdit" parent="PanelContainer/Panel/VBox/HBox7"]
+margin_left = 91.0
+margin_right = 236.0
 margin_bottom = 29.0
-size_flags_horizontal = 3
+rect_min_size = Vector2( 145, 0 )
+size_flags_horizontal = 10
 
-[node name="HBoxContainer8" type="HBoxContainer" parent="PanelContainer/Panel/VBoxContainer"]
-margin_top = 231.0
-margin_right = 209.0
+[node name="Grid" type="GridContainer" parent="PanelContainer/Panel/VBox"]
+margin_right = 236.0
+margin_bottom = 228.0
+grow_horizontal = 2
+grow_vertical = 2
+rect_min_size = Vector2( 0, 228 )
+columns = 4
+
+[node name="TB01" type="TextureButton" parent="PanelContainer/Panel/VBox/Grid"]
+margin_left = 4.0
+margin_top = 3.0
+margin_right = 52.0
+margin_bottom = 51.0
+rect_min_size = Vector2( 48, 48 )
+size_flags_horizontal = 6
+size_flags_vertical = 6
+texture_normal = ExtResource( 2 )
+expand = true
+
+[node name="TB02" type="TextureButton" parent="PanelContainer/Panel/VBox/Grid"]
+margin_left = 64.0
+margin_top = 3.0
+margin_right = 112.0
+margin_bottom = 51.0
+rect_min_size = Vector2( 48, 48 )
+size_flags_horizontal = 6
+size_flags_vertical = 6
+texture_normal = ExtResource( 8 )
+expand = true
+
+[node name="TB03" type="TextureButton" parent="PanelContainer/Panel/VBox/Grid"]
+margin_left = 124.0
+margin_top = 3.0
+margin_right = 172.0
+margin_bottom = 51.0
+rect_min_size = Vector2( 48, 48 )
+size_flags_horizontal = 6
+size_flags_vertical = 6
+texture_normal = ExtResource( 3 )
+expand = true
+
+[node name="TB04" type="TextureButton" parent="PanelContainer/Panel/VBox/Grid"]
+margin_left = 184.0
+margin_top = 3.0
+margin_right = 232.0
+margin_bottom = 51.0
+rect_min_size = Vector2( 48, 48 )
+size_flags_horizontal = 6
+size_flags_vertical = 6
+texture_normal = ExtResource( 1 )
+expand = true
+
+[node name="TB05" type="TextureButton" parent="PanelContainer/Panel/VBox/Grid"]
+margin_left = 4.0
+margin_top = 61.0
+margin_right = 52.0
+margin_bottom = 109.0
+rect_min_size = Vector2( 48, 48 )
+size_flags_horizontal = 6
+size_flags_vertical = 6
+texture_normal = ExtResource( 6 )
+expand = true
+
+[node name="TB06" type="TextureButton" parent="PanelContainer/Panel/VBox/Grid"]
+margin_left = 64.0
+margin_top = 61.0
+margin_right = 112.0
+margin_bottom = 109.0
+rect_min_size = Vector2( 48, 48 )
+size_flags_horizontal = 6
+size_flags_vertical = 6
+texture_normal = ExtResource( 7 )
+expand = true
+
+[node name="TB07" type="TextureButton" parent="PanelContainer/Panel/VBox/Grid"]
+margin_left = 124.0
+margin_top = 61.0
+margin_right = 172.0
+margin_bottom = 109.0
+rect_min_size = Vector2( 48, 48 )
+size_flags_horizontal = 6
+size_flags_vertical = 6
+texture_normal = ExtResource( 9 )
+expand = true
+
+[node name="TB08" type="TextureButton" parent="PanelContainer/Panel/VBox/Grid"]
+margin_left = 184.0
+margin_top = 61.0
+margin_right = 232.0
+margin_bottom = 109.0
+rect_min_size = Vector2( 48, 48 )
+size_flags_horizontal = 6
+size_flags_vertical = 6
+texture_normal = ExtResource( 10 )
+expand = true
+
+[node name="TB09" type="TextureButton" parent="PanelContainer/Panel/VBox/Grid"]
+margin_left = 4.0
+margin_top = 119.0
+margin_right = 52.0
+margin_bottom = 167.0
+rect_min_size = Vector2( 48, 48 )
+size_flags_horizontal = 6
+size_flags_vertical = 6
+texture_normal = ExtResource( 11 )
+expand = true
+
+[node name="TB10" type="TextureButton" parent="PanelContainer/Panel/VBox/Grid"]
+margin_left = 64.0
+margin_top = 119.0
+margin_right = 112.0
+margin_bottom = 167.0
+rect_min_size = Vector2( 48, 48 )
+size_flags_horizontal = 6
+size_flags_vertical = 6
+texture_normal = ExtResource( 14 )
+expand = true
+
+[node name="TB11" type="TextureButton" parent="PanelContainer/Panel/VBox/Grid"]
+margin_left = 124.0
+margin_top = 119.0
+margin_right = 172.0
+margin_bottom = 167.0
+rect_min_size = Vector2( 48, 48 )
+size_flags_horizontal = 6
+size_flags_vertical = 6
+texture_normal = ExtResource( 12 )
+expand = true
+
+[node name="TB12" type="TextureButton" parent="PanelContainer/Panel/VBox/Grid"]
+margin_left = 184.0
+margin_top = 119.0
+margin_right = 232.0
+margin_bottom = 167.0
+rect_min_size = Vector2( 48, 48 )
+size_flags_horizontal = 6
+size_flags_vertical = 6
+texture_normal = ExtResource( 13 )
+expand = true
+
+[node name="TB13" type="TextureButton" parent="PanelContainer/Panel/VBox/Grid"]
+margin_left = 4.0
+margin_top = 177.0
+margin_right = 52.0
+margin_bottom = 225.0
+rect_min_size = Vector2( 48, 48 )
+size_flags_horizontal = 6
+size_flags_vertical = 6
+texture_normal = ExtResource( 15 )
+expand = true
+
+[node name="TB14" type="TextureButton" parent="PanelContainer/Panel/VBox/Grid"]
+margin_left = 64.0
+margin_top = 177.0
+margin_right = 112.0
+margin_bottom = 225.0
+rect_min_size = Vector2( 48, 48 )
+size_flags_horizontal = 6
+size_flags_vertical = 6
+texture_normal = ExtResource( 16 )
+expand = true
+
+[node name="TB15" type="TextureButton" parent="PanelContainer/Panel/VBox/Grid"]
+margin_left = 124.0
+margin_top = 177.0
+margin_right = 172.0
+margin_bottom = 225.0
+rect_min_size = Vector2( 48, 48 )
+size_flags_horizontal = 6
+size_flags_vertical = 6
+texture_normal = ExtResource( 4 )
+expand = true
+
+[node name="TB16" type="TextureButton" parent="PanelContainer/Panel/VBox/Grid"]
+margin_left = 184.0
+margin_top = 177.0
+margin_right = 232.0
+margin_bottom = 225.0
+rect_min_size = Vector2( 48, 48 )
+size_flags_horizontal = 6
+size_flags_vertical = 6
+texture_normal = ExtResource( 5 )
+expand = true
+
+[node name="HBox8" type="HBoxContainer" parent="PanelContainer/Panel/VBox"]
+margin_top = 232.0
+margin_right = 236.0
 margin_bottom = 271.0
 size_flags_vertical = 3
 custom_constants/separation = 10
 alignment = 1
 
-[node name="BOK" type="Button" parent="PanelContainer/Panel/VBoxContainer/HBoxContainer8"]
-margin_left = 19.0
+[node name="BOK" type="Button" parent="PanelContainer/Panel/VBox/HBox8"]
+visible = false
+margin_left = 33.0
 margin_top = 7.0
-margin_right = 99.0
+margin_right = 113.0
 margin_bottom = 32.0
 rect_min_size = Vector2( 80, 25 )
 size_flags_vertical = 4
 text = "OK"
 
-[node name="BCancel" type="Button" parent="PanelContainer/Panel/VBoxContainer/HBoxContainer8"]
-margin_left = 109.0
+[node name="BCancel" type="Button" parent="PanelContainer/Panel/VBox/HBox8"]
+margin_left = 78.0
 margin_top = 7.0
-margin_right = 189.0
+margin_right = 158.0
 margin_bottom = 32.0
 rect_min_size = Vector2( 80, 25 )
 size_flags_vertical = 4

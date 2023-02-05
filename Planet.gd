@@ -57,10 +57,12 @@ func calc_cur_line_timer(vel: float):
 	else:
 		return LINE_TIMER * 2
 
+
 func check_distance():
-	var dis = position.distance_to(other_planets[0].position)
-	if dis > 5000:
+	var dis = position.distance_to(orbits.calc_mass_center())
+	if dis > 10000:
 		orbits.delete_planet(self)
+
 
 #var fps_process = 0
 #var fps_phisics_process = 0
