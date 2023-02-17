@@ -42,7 +42,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 
 [node name="HBox9" type="HBoxContainer" parent="PanelContainer/Panel/VBox"]
-visible = false
 margin_right = 236.0
 margin_bottom = 62.0
 
@@ -82,6 +81,8 @@ margin_right = 166.0
 margin_bottom = 29.0
 rect_min_size = Vector2( 120, 0 )
 size_flags_horizontal = 8
+context_menu_enabled = false
+shortcut_keys_enabled = false
 
 [node name="HBox6" type="HBoxContainer" parent="PanelContainer/Panel/VBox/HBox9/VBox"]
 margin_top = 33.0
@@ -103,9 +104,10 @@ margin_right = 166.0
 margin_bottom = 29.0
 rect_min_size = Vector2( 120, 0 )
 size_flags_horizontal = 10
+context_menu_enabled = false
+shortcut_keys_enabled = false
 
 [node name="HBox2" type="HBoxContainer" parent="PanelContainer/Panel/VBox"]
-visible = false
 margin_top = 66.0
 margin_right = 236.0
 margin_bottom = 95.0
@@ -125,9 +127,10 @@ margin_right = 236.0
 margin_bottom = 29.0
 rect_min_size = Vector2( 145, 0 )
 size_flags_horizontal = 10
+context_menu_enabled = false
+shortcut_keys_enabled = false
 
 [node name="HBox3" type="HBoxContainer" parent="PanelContainer/Panel/VBox"]
-visible = false
 margin_top = 99.0
 margin_right = 236.0
 margin_bottom = 128.0
@@ -147,9 +150,10 @@ margin_right = 236.0
 margin_bottom = 29.0
 rect_min_size = Vector2( 145, 0 )
 size_flags_horizontal = 10
+context_menu_enabled = false
+shortcut_keys_enabled = false
 
 [node name="HBox4" type="HBoxContainer" parent="PanelContainer/Panel/VBox"]
-visible = false
 margin_top = 132.0
 margin_right = 236.0
 margin_bottom = 161.0
@@ -169,9 +173,10 @@ margin_right = 236.0
 margin_bottom = 29.0
 rect_min_size = Vector2( 145, 0 )
 size_flags_horizontal = 10
+context_menu_enabled = false
+shortcut_keys_enabled = false
 
 [node name="HBox5" type="HBoxContainer" parent="PanelContainer/Panel/VBox"]
-visible = false
 margin_top = 165.0
 margin_right = 236.0
 margin_bottom = 194.0
@@ -191,9 +196,10 @@ margin_right = 236.0
 margin_bottom = 29.0
 rect_min_size = Vector2( 145, 0 )
 size_flags_horizontal = 10
+context_menu_enabled = false
+shortcut_keys_enabled = false
 
 [node name="HBox7" type="HBoxContainer" parent="PanelContainer/Panel/VBox"]
-visible = false
 margin_top = 198.0
 margin_right = 236.0
 margin_bottom = 227.0
@@ -213,8 +219,11 @@ margin_right = 236.0
 margin_bottom = 29.0
 rect_min_size = Vector2( 145, 0 )
 size_flags_horizontal = 10
+context_menu_enabled = false
+shortcut_keys_enabled = false
 
 [node name="Grid" type="GridContainer" parent="PanelContainer/Panel/VBox"]
+visible = false
 margin_right = 236.0
 margin_bottom = 228.0
 grow_horizontal = 2
@@ -399,7 +408,7 @@ texture_normal = ExtResource( 5 )
 expand = true
 
 [node name="HBox8" type="HBoxContainer" parent="PanelContainer/Panel/VBox"]
-margin_top = 232.0
+margin_top = 231.0
 margin_right = 236.0
 margin_bottom = 271.0
 size_flags_vertical = 3
@@ -407,7 +416,6 @@ custom_constants/separation = 10
 alignment = 1
 
 [node name="BOK" type="Button" parent="PanelContainer/Panel/VBox/HBox8"]
-visible = false
 margin_left = 33.0
 margin_top = 7.0
 margin_right = 113.0
@@ -417,9 +425,9 @@ size_flags_vertical = 4
 text = "OK"
 
 [node name="BCancel" type="Button" parent="PanelContainer/Panel/VBox/HBox8"]
-margin_left = 78.0
+margin_left = 123.0
 margin_top = 7.0
-margin_right = 158.0
+margin_right = 203.0
 margin_bottom = 32.0
 rect_min_size = Vector2( 80, 25 )
 size_flags_vertical = 4

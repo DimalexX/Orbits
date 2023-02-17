@@ -42,7 +42,7 @@ func check_period():
 			turned = true
 	if linear_velocity.x < 0 and linear_velocity.y < 0:
 		if turned:
-			num_of_points = min(points_in_period * 1.5, MAX_NUM_OF_POINTS)
+			num_of_points = min(points_in_period * 1.2, MAX_NUM_OF_POINTS)
 			points_in_period = 0
 			turned = false
 		else:
@@ -95,7 +95,7 @@ func _physics_process(_delta):
 	for pl in other_planets:
 		pl_global_position = pl.global_position
 		add_central_force(global_position.direction_to(pl_global_position)*
-			mass*pl.mass/global_position.distance_squared_to(pl_global_position)*6.6725) #*0.66725)
+			mass*pl.mass/global_position.distance_squared_to(pl_global_position)) #*0.66725)
 
 
 func save():

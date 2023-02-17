@@ -1,10 +1,10 @@
 extends Node2D
 
-const RND_GEN_ASTEROIDS_X = 1000
-const RND_GEN_ASTEROIDS_Y = 600
-const RND_GEN_ASTEROIDS_SOL_DIST = 400
-const RND_GEN_ASTEROIDS_MIN_SPEED = 30
-const RND_GEN_ASTEROIDS_MAX_SPEED = 50
+const RND_GEN_ASTEROIDS_X = 800
+const RND_GEN_ASTEROIDS_Y = 500
+const RND_GEN_ASTEROIDS_SOL_DIST = 300
+const RND_GEN_ASTEROIDS_MIN_SPEED = 20
+const RND_GEN_ASTEROIDS_MAX_SPEED = 40
 const RND_GEN_ASTEROIDS_ANGLE = .5
 const RND_GEN_ASTEROIDS_MIN_MASS = .01
 const RND_GEN_ASTEROIDS_MAX_MASS = 1
@@ -75,7 +75,7 @@ func _ready():
 	randomize()
 	planets = get_tree().get_nodes_in_group("Planet")
 	sort_planets()
-	generate_asteroids(0)
+	generate_asteroids(5)
 	sol_camera.global_position = calc_mass_center()
 	sol_camera.smoothing_enabled = true
 	OS.min_window_size = Vector2(500, 400)
